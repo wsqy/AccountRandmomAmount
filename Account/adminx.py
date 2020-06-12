@@ -60,6 +60,7 @@ class SellerAdmin:
 
 xadmin.site.register(xadmin.views.CommAdminView, GlobalSettings)
 xadmin.site.register(Company, CompanyAdmin)
+xadmin.site.register(BusinessScope, BusinessScopeAdmin)
 xadmin.site.register(Seller, SellerAdmin)
 xadmin.site.register(Buyer, BuyerAdmin)
 xadmin.site.register(Account, AccountAdmin)
