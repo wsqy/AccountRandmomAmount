@@ -1,9 +1,8 @@
-import time
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
 from Statistics.models import DayBuyer, DaySeller, MouthBuyer, MouthSeller
-from Tran.models import Task, TaskBatch, Transaction
+from Tran.models import Task, Transaction
 from Tran import utils as task_utils
 
 
@@ -14,7 +13,9 @@ def task_post_save(sender, instance=None, created=False, **kwargs):
     for i in range(instance.batch_total):
         taskbatch = task_utils.taskbatch_add_one(instance, i+1)
         taskbatch.save()
-        transaction_list = task_utils.transaction_add_list(taskbatch)
-        Transaction.objects.bulk_create(transaction_list)
+        for transaction in task_utils.transaction_add_list(taskbatch):
+            transaction.save()
+            task_utils.transaction_add_statistics(transaction)
+        # Transaction.objects.bulk_create(transaction_list)
     instance.status = True
     instance.save()

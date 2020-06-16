@@ -9,7 +9,6 @@ class TaskAdmin:
     download.short_description = '下载报表'
 
     list_display = ['date', 'batch_total', 'remark', 'status', 'download']
-    readonly_fields = ['status',]
     empty_value_display = '无'
 
     def save_models(self):
@@ -32,6 +31,8 @@ class TaskAdmin:
         if 'update' in self.request.path:
             return  ['amount_total_min', 'amount_total_max', 'batch_num_min', \
                      'batch_num_max', 'batch_total','status','remark', 'download_link']
+        else:
+            return ['status',]
 
 
 class TaskBatchAdmin:

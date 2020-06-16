@@ -39,7 +39,7 @@ class MouthBuyer(models.Model):
     """
     月买方交易额总量表
     """
-    mouth = models.CharField(max_length=6, verbose_name='月份', blank=True, null=True,)
+    date = models.CharField(max_length=6, verbose_name='月份', blank=True, null=True,)
     buyer = models.ForeignKey(Buyer, on_delete=models.PROTECT, verbose_name='买方')
     amount_total = models.IntegerField(verbose_name='月总交易金额(万元)', default=0)
 
@@ -55,7 +55,7 @@ class MouthSeller(models.Model):
     """
     月卖方交易额总量表
     """
-    mouth = models.CharField(max_length=6, verbose_name='月份', blank=True, null=True,)
+    date = models.CharField(max_length=6, verbose_name='月份', blank=True, null=True,)
     seller = models.ForeignKey(Seller, on_delete=models.PROTECT, verbose_name='卖方')
     amount_total = models.IntegerField(verbose_name='月总交易金额(万元)', default=0)
 

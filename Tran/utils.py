@@ -1,7 +1,8 @@
 import random
-
+from django.utils import timezone
 from Tran.models import TaskBatch, Transaction
 from Account.models import Buyer, Seller
+from Statistics.models import DayBuyer, DaySeller, MouthBuyer, MouthSeller
 
 def taskbatch_add_one(task, _num):
     return TaskBatch(task=task, num=_num, remark=task.remark,
@@ -36,8 +37,28 @@ def transaction_add_list(instance):
         if max(hongbao_list) < 950:
             break
     # 随机获取num个买方
-    buyer_list = Buyer.objects.all().order_by('?')[:num]
+    buyer_list = Buyer.objects.filter(scope=1).order_by('?')[:num]
     # 根据买方公司分类获取随机匹配卖方
-    seller_list = [Seller.objects.filter(scope=buyer.scope).order_by('?').first() for buyer in buyer_list]
-    return [Transaction(task=instance.task, task_batch=instance, remark=instance.remark,
-     buyer=buyer_list[i], seller=seller_list[i], amount=hongbao_list[i]) for i in range(num)]
+    # seller_list = [Seller.objects.filter(scope=buyer.scope).order_by('?').first() for buyer in buyer_list]
+    
+    return [Transaction(task=instance.task, task_batch=instance,
+     remark=instance.remark, buyer=buyer_list[i], seller=Seller.objects.filter(scope=buyer_list[i].scope).order_by('?').first(),
+     amount=hongbao_list[i], date=timezone.now()) for i in range(num)]
+
+    
+def transaction_add_statistics(transaction):
+    daybuyer = DayBuyer.objects.get_or_create(buyer=transaction.buyer, date=transaction.date)[0]
+    daybuyer.amount_total += transaction.amount
+    daybuyer.save()
+
+    dayseller = DaySeller.objects.get_or_create(seller=transaction.seller, date=transaction.date)[0]
+    dayseller.amount_total += transaction.amount
+    dayseller.save()
+
+    mouthbuyer = MouthBuyer.objects.get_or_create(buyer=transaction.buyer, date=transaction.date.strftime("%Y%m"))[0]
+    mouthbuyer.amount_total += transaction.amount
+    mouthbuyer.save()
+
+    mouthseller = MouthSeller.objects.get_or_create(seller=transaction.seller, date=transaction.date.strftime("%Y%m"))[0]
+    mouthseller.amount_total += transaction.amount
+    mouthseller.save()

@@ -19,7 +19,8 @@ class CompanyAdmin:
     list_display = ['name', 'corporation', 'is_activate',]
     list_filter = ['corporation', 'is_activate',]
     list_editable = ['name',]
-    search_fields = ['name',]
+    search_fields = ['name',]    
+    import_excel = True
 
 class BusinessScopeAdmin:
     list_display = ['id', 'name',]
@@ -44,6 +45,7 @@ class AccountAdmin:
     list_display = ['businesscompany', 'account_name', 'account', 'bank_name', 'bank_code']
     # list_editable = ['scope', 'total_max_limit']
     search_fields = ['businesscompany', 'account', 'bank_name', 'bank_code']
+    import_excel = True
 
 class BuyerAdmin:
     list_display = ['name', 'scope', 'is_activate', 'total_max_limit', 'company']
