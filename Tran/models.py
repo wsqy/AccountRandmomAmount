@@ -73,9 +73,12 @@ class Transaction(models.Model):
     交易明细表
     """
     task = models.ForeignKey(Task, on_delete=models.PROTECT, verbose_name='所属日任务')
-    task_batch = models.ForeignKey(TaskBatch, on_delete=models.PROTECT, verbose_name='所属日批次')
+    task_batch = models.ForeignKey(TaskBatch, on_delete=models.PROTECT,
+                                    verbose_name='所属日批次')
     buyer = models.ForeignKey(Buyer, on_delete=models.PROTECT, verbose_name='买方')
     seller = models.ForeignKey(Seller, on_delete=models.PROTECT, verbose_name='卖方')
+    date = models.DateField(verbose_name='任务日期', blank=False,null=False,
+                            default=timezone.now, )
     amount = models.IntegerField(verbose_name='交易金额', blank=False, null=False, )
     remark = models.CharField(max_length=40, verbose_name='交易备注', blank=True, null=True,)
 
