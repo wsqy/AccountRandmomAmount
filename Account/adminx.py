@@ -1,5 +1,6 @@
 import xadmin
 from django.utils.html import format_html
+from xadmin.models import Log
 
 from .models import Company, BusinessScope, BusinessCompany, Buyer, Seller, Account
 
@@ -59,6 +60,7 @@ class SellerAdmin:
     search_fields = ['name',]
     inlines = [AccountInline, ]
 
+xadmin.site.unregister(Log)
 
 xadmin.site.register(xadmin.views.CommAdminView, GlobalSettings)
 xadmin.site.register(Company, CompanyAdmin)

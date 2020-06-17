@@ -11,12 +11,6 @@ class TaskAdmin:
     list_display = ['date', 'batch_total', 'remark', 'status', 'download']
     empty_value_display = '无'
 
-    def save_models(self):
-        instance = self.new_obj
-        if not instance.name:
-            instance.name = instance.date.strftime('%Y-%m-%d任务')
-        super(TaskAdmin, self).save_models()
-
     def get_context(self):
         context = super(TaskAdmin, self).get_context()
         context.update({

@@ -65,7 +65,7 @@ class TaskBatch(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return '{}-{}'.format(self.task.name, self.num)
+        return '{}-{}'.format(self.task, self.num)
 
 
 class Transaction(models.Model):

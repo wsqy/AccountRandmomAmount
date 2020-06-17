@@ -1,7 +1,6 @@
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
-from Statistics.models import DayBuyer, DaySeller, MouthBuyer, MouthSeller
 from Tran.models import Task, Transaction
 from Tran import utils as task_utils
 

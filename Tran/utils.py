@@ -1,5 +1,4 @@
 import random
-from django.utils import timezone
 from Tran.models import TaskBatch, Transaction
 from Account.models import Buyer, Seller
 from Statistics.models import DayBuyer, DaySeller, MouthBuyer, MouthSeller
@@ -43,22 +42,22 @@ def transaction_add_list(instance):
     
     return [Transaction(task=instance.task, task_batch=instance,
      remark=instance.remark, buyer=buyer_list[i], seller=Seller.objects.filter(scope=buyer_list[i].scope).order_by('?').first(),
-     amount=hongbao_list[i], date=timezone.now()) for i in range(num)]
+     amount=hongbao_list[i], date=instance.task.date) for i in range(num)]
 
     
 def transaction_add_statistics(transaction):
-    daybuyer = DayBuyer.objects.get_or_create(buyer=transaction.buyer, date=transaction.date)[0]
+    daybuyer = DayBuyer.objects.select_for_update().get_or_create(buyer=transaction.buyer, date=transaction.date)[0]
     daybuyer.amount_total += transaction.amount
     daybuyer.save()
 
-    dayseller = DaySeller.objects.get_or_create(seller=transaction.seller, date=transaction.date)[0]
+    dayseller = DaySeller.objects.select_for_update().get_or_create(seller=transaction.seller, date=transaction.date)[0]
     dayseller.amount_total += transaction.amount
     dayseller.save()
 
-    mouthbuyer = MouthBuyer.objects.get_or_create(buyer=transaction.buyer, date=transaction.date.strftime("%Y%m"))[0]
+    mouthbuyer = MouthBuyer.objects.select_for_update().get_or_create(buyer=transaction.buyer, date=transaction.date.strftime("%Y%m"))[0]
     mouthbuyer.amount_total += transaction.amount
     mouthbuyer.save()
 
-    mouthseller = MouthSeller.objects.get_or_create(seller=transaction.seller, date=transaction.date.strftime("%Y%m"))[0]
+    mouthseller = MouthSeller.objects.select_for_update().get_or_create(seller=transaction.seller, date=transaction.date.strftime("%Y%m"))[0]
     mouthseller.amount_total += transaction.amount
     mouthseller.save()

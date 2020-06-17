@@ -48,7 +48,7 @@ class MouthBuyer(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return '{}于{}总交易额{}万元'.format(self.buyer, self.mouth, self.amount_total)
+        return '{}于{}总交易额{}万元'.format(self.buyer, self.date, self.amount_total)
 
 
 class MouthSeller(models.Model):
@@ -64,4 +64,4 @@ class MouthSeller(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return '{}于{}总交易额{}万元'.format(self.seller, self.mouth, self.amount_total)
+        return '{}于{}总交易额{}万元'.format(self.seller, self.date, self.amount_total)
