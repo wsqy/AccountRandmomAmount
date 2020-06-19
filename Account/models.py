@@ -48,7 +48,8 @@ class BusinessCompany(models.Model):
     name = models.CharField(max_length=40, verbose_name='公司名称', blank=False, null=False, help_text='公司名称')
     scope = models.ForeignKey(BusinessScope, on_delete=models.PROTECT, verbose_name='公司经营分类', blank=False, null=False, )
     is_activate = models.BooleanField(default=True, verbose_name='状态', blank=False, null=False, )
-    total_max_limit = models.PositiveIntegerField(verbose_name='月上限(万元)', help_text='设置为0代表不设置上限', blank=False, null=False, default=0)
+    mouth_total_max_limit = models.PositiveIntegerField(verbose_name='月上限(万元)', help_text='设置为0代表不设置上限', blank=False, null=False, default=0)
+    day_total_max_limit = models.PositiveIntegerField(verbose_name='日上限(万元)', help_text='设置为0代表不设置上限', blank=False, null=False, default=0)
     
     class Meta:
         verbose_name = '交易公司'
@@ -93,7 +94,7 @@ class Account(models.Model):
     """
     账号表
     """
-    businesscompany = models.ForeignKey(BusinessCompany, on_delete=models.PROTECT, verbose_name='所属公司')
+    company = models.ForeignKey(Company, on_delete=models.PROTECT, verbose_name='所属集团子公司')
     account_name = models.CharField(max_length=40, verbose_name='账号名称', blank=False, null=False, help_text='账号名称')
     account = models.CharField(max_length=40, verbose_name='账号', blank=False, null=False, help_text='账号')
     bank_name = models.CharField(max_length=40, verbose_name='开户行名称', blank=False, null=False, help_text='开户行名称')

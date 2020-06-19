@@ -1,15 +1,16 @@
 import xadmin
 from django.utils.html import format_html
-from .models import  Task, TaskBatch, Transaction
+from .models import Task, TaskBatch, Transaction
 
 class TaskAdmin:
     def download(self, obj):
-        button_html = """<a class='changelink' href='{}'>下载本批次数据</a>""".format(obj.download_link)
+        button_html = """<a class='changelink' href='{}'>下载本批次数据</a>""".format(123)
         return format_html(button_html)
     download.short_description = '下载报表'
 
-    list_display = ['date', 'batch_total', 'remark', 'status', 'download']
+    list_display = ['date', 'batch_total', 'status', 'download']
     empty_value_display = '无'
+    exclude = ['file_no',]
 
     def get_context(self):
         context = super(TaskAdmin, self).get_context()
@@ -24,15 +25,15 @@ class TaskAdmin:
     def get_readonly_fields(self, obj=None):
         if 'update' in self.request.path:
             return  ['amount_total_min', 'amount_total_max', 'batch_num_min', \
-                     'batch_num_max', 'batch_total','status','remark', 'download_link']
+                     'batch_num_max', 'batch_total','status', 'remark']
         else:
             return ['status',]
 
 
 class TaskBatchAdmin:
-    list_display = ['task', 'num', 'batch_total', 'amount_total', 'remark', ]
+    list_display = ['task', 'num', 'batch_total', 'amount_total',]
     list_filter = ['task', ]
-    readonly_fields = ['task', 'num', 'batch_total', 'amount_total', 'remark',]
+    readonly_fields = ['task', 'num', 'batch_total', 'amount_total',]
     empty_value_display = '无'
 
     def has_add_permission(self):
@@ -49,9 +50,9 @@ class TaskBatchAdmin:
         return context
 
 class TransactionAdmin:
-    list_display = ['task', 'task_batch', 'buyer', 'seller', 'amount', 'remark', ]
+    list_display = ['task', 'task_batch', 'buyer', 'seller', 'amount', ]
     list_filter = ['task', 'task_batch', ]
-    readonly_fields = ['task', 'task_batch', 'buyer', 'seller', 'amount', 'remark', ]
+    readonly_fields = ['task', 'task_batch', 'buyer', 'seller', 'amount', ]
     empty_value_display = '无'
 
     def has_add_permission(self):
