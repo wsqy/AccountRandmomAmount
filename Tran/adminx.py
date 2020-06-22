@@ -39,11 +39,11 @@ class TaskBatchAdmin:
         return format_html(button_html)
 
     def download_hz(self, obj):
-        button_html = "<a class='changelink' href={}>下载</a>".format(get_download_excelfile(obj, '转账明细'))
+        button_html = "<a class='changelink' href={}>下载</a>".format(get_download_excelfile(obj, '转账信息'))
         return format_html(button_html)
 
     download_zz.short_description = '下载转账文件'
-    download_hz.short_description = '下载转账明细'
+    download_hz.short_description = '下载转账信息'
     list_display = ['task', 'num', 'batch_total', 'amount_total', 'download_zz', 'download_hz']
     list_filter = ['task', ]
     readonly_fields = ['task', 'num', 'batch_total', 'amount_total',]

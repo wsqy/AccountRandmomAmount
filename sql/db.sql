@@ -29,11 +29,11 @@ INSERT INTO "main"."Account_businesscompany" ("id", "name", "is_activate", "mout
 INSERT INTO "main"."Account_businesscompany" ("id", "name", "is_activate", "mouth_total_max_limit", "day_total_max_limit", "scope_id") VALUES ('8', '买方公司8', '1', '0', '0', '1');
 INSERT INTO "main"."Account_businesscompany" ("id", "name", "is_activate", "mouth_total_max_limit", "day_total_max_limit", "scope_id") VALUES ('9', '买方公司9', '1', '4000', '900', '1');
 INSERT INTO "main"."Account_businesscompany" ("id", "name", "is_activate", "mouth_total_max_limit", "day_total_max_limit", "scope_id") VALUES ('10', '买方公司10', '1', '6000', '1780', '1');
-INSERT INTO "main"."Account_businesscompany" ("id", "name", "is_activate", "mouth_total_max_limit", "day_total_max_limit", "scope_id") VALUES ('11', '买方公司10', '1', '6000', '1780', '1');
-INSERT INTO "main"."Account_businesscompany" ("id", "name", "is_activate", "mouth_total_max_limit", "day_total_max_limit", "scope_id") VALUES ('12', '买方公司11', '1', '9900', '2100', '2');
-INSERT INTO "main"."Account_businesscompany" ("id", "name", "is_activate", "mouth_total_max_limit", "day_total_max_limit", "scope_id") VALUES ('13', '买方公司12', '1', '12300', '3000', '4');
-INSERT INTO "main"."Account_businesscompany" ("id", "name", "is_activate", "mouth_total_max_limit", "day_total_max_limit", "scope_id") VALUES ('14', '买方公司13', '1', '23000', '6000', '2');
-INSERT INTO "main"."Account_businesscompany" ("id", "name", "is_activate", "mouth_total_max_limit", "day_total_max_limit", "scope_id") VALUES ('15', '买方公司14', '1', '0', '0', '2');
+INSERT INTO "main"."Account_businesscompany" ("id", "name", "is_activate", "mouth_total_max_limit", "day_total_max_limit", "scope_id") VALUES ('11', '买方公司11', '1', '6000', '1780', '1');
+INSERT INTO "main"."Account_businesscompany" ("id", "name", "is_activate", "mouth_total_max_limit", "day_total_max_limit", "scope_id") VALUES ('12', '买方公司12', '1', '9900', '2100', '2');
+INSERT INTO "main"."Account_businesscompany" ("id", "name", "is_activate", "mouth_total_max_limit", "day_total_max_limit", "scope_id") VALUES ('13', '买方公司13', '1', '12300', '3000', '4');
+INSERT INTO "main"."Account_businesscompany" ("id", "name", "is_activate", "mouth_total_max_limit", "day_total_max_limit", "scope_id") VALUES ('14', '买方公司14', '1', '23000', '6000', '2');
+INSERT INTO "main"."Account_businesscompany" ("id", "name", "is_activate", "mouth_total_max_limit", "day_total_max_limit", "scope_id") VALUES ('15', '买方公司15', '1', '0', '0', '2');
 INSERT INTO "main"."Account_businesscompany" ("id", "name", "is_activate", "mouth_total_max_limit", "day_total_max_limit", "scope_id") VALUES ('16', '卖方公司1', '1', '12200', '3000', '1');
 INSERT INTO "main"."Account_businesscompany" ("id", "name", "is_activate", "mouth_total_max_limit", "day_total_max_limit", "scope_id") VALUES ('17', '卖方公司2', '1', '34400', '9000', '1');
 INSERT INTO "main"."Account_businesscompany" ("id", "name", "is_activate", "mouth_total_max_limit", "day_total_max_limit", "scope_id") VALUES ('18', '卖方公司3', '1', '77700', '21000', '1');
