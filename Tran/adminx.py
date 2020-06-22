@@ -1,15 +1,18 @@
 import xadmin
 from django.utils.html import format_html
 from .models import Task, TaskBatch, Transaction
+from .utils import get_download_zipfile, get_download_excelfile
+
+
 
 class TaskAdmin:
     def download(self, obj):
-        button_html = """<a class='changelink' href='{}'>下载本批次数据</a>""".format(123)
+        button_html = "<a class='changelink' href={}>下载</a>".format(get_download_zipfile(obj))
         return format_html(button_html)
-    download.short_description = '下载报表'
+    download.short_description = '下载汇总文件'
 
     list_display = ['date', 'batch_total', 'status', 'download']
-    empty_value_display = '无'
+    # empty_value_display = '无'
     exclude = ['file_no',]
 
     def get_context(self):
@@ -31,7 +34,17 @@ class TaskAdmin:
 
 
 class TaskBatchAdmin:
-    list_display = ['task', 'num', 'batch_total', 'amount_total',]
+    def download_zz(self, obj):
+        button_html = "<a class='changelink' href={}>下载</a>".format(get_download_excelfile(obj, '转账文件'))
+        return format_html(button_html)
+
+    def download_hz(self, obj):
+        button_html = "<a class='changelink' href={}>下载</a>".format(get_download_excelfile(obj, '转账明细'))
+        return format_html(button_html)
+
+    download_zz.short_description = '下载转账文件'
+    download_hz.short_description = '下载转账明细'
+    list_display = ['task', 'num', 'batch_total', 'amount_total', 'download_zz', 'download_hz']
     list_filter = ['task', ]
     readonly_fields = ['task', 'num', 'batch_total', 'amount_total',]
     empty_value_display = '无'

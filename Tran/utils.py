@@ -11,6 +11,19 @@ def random_int(len=5):
 def random_str(len=6):
     return ''.join(random.sample(string.ascii_letters + string.digits, len))
 
+def get_download_zipfile(instance):
+    date_str = instance.date.strftime('%Y-%m-%d')
+    filepath = instance.date.strftime(r'/media/baobiao/%Y-%m/%d/')
+    
+    filename_content = '{}-{}'.format(date_str, instance.file_no)
+    return filepath+filename_content+'.zip'
+
+def get_download_excelfile(instance, type='转账文件'):
+    date_str = instance.task.date.strftime('%Y-%m-%d')
+    filepath = instance.task.date.strftime(r'/media/baobiao/%Y-%m/%d/')
+    
+    filename_content = '{}-{}'.format(date_str, instance.task.file_no)
+    return '{}{}-{}-{}.xlsx'.format(filepath, filename_content, type, instance.num)
 
 def taskbatch_add_one(task, _num):
     return TaskBatch(task=task, num=_num,

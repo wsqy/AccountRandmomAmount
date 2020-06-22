@@ -20,8 +20,8 @@ class Task(models.Model):
     )
     date = models.DateField(verbose_name='任务日期', blank=False,null=False,
                             default=timezone.now, )
-    name = models.CharField(max_length=40, verbose_name='批次名称', blank=True, null=True,
-                            help_text='同一日有多个批次任务最好设置批次名称')
+    name = models.CharField(max_length=40, verbose_name='任务名称', blank=True, null=True,
+                            help_text='同一日有多个任务最好设置本次任务名称')
     amount_total_min = models.PositiveIntegerField(verbose_name='每日总金额下限',
                                                    blank=False, null=False, )
     amount_total_max = models.PositiveIntegerField(verbose_name='每日总金额上限',

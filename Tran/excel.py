@@ -13,7 +13,7 @@ class CreateExcel:
         self.date_day = self.date.strftime('d')
         self.random_str = task.file_no
         self.date_str = self.date.strftime('%Y-%m-%d')
-        self.filepath = self.date.strftime('%Y-%m{0}%d{0}'.format(os.sep))
+        self.filepath = self.date.strftime('media{0}baobiao{0}%Y-%m{0}%d{0}'.format(os.sep))
         
         self.filename_content = '{}-{}'.format(self.date_str, self.random_str)
         self.filename = '{}-汇总.xlsx'.format(self.filename_content)
