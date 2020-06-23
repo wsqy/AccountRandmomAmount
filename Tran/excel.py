@@ -73,14 +73,14 @@ class CreateExcel:
 
 class TranExcel(CreateExcel):
     def __init__(self, taskbatch):
-        task = taskbatch.task
-        super(TranExcel,self).__init__(task)
+        self.task = taskbatch.task
+        self.taskbatch = taskbatch
+        super(TranExcel,self).__init__(self.task)
         self.filename_content = '{}-{}-转账文件-{}'.format(self.date_str, self.random_str, taskbatch.num)
         self.filename = '{}.xlsx'.format(self.filename_content)
 
     def close(self):
         self.workbook.save("{}{}".format(self.filepath, self.filename))
-        pass
 
     def header(self):
         pass
@@ -113,14 +113,95 @@ class FujianTranExcel(TranExcel):
         self.worksheet['A%s'% i].number_format = numbers.FORMAT_TEXT
         self.worksheet['B%s'% i] = instance.amount * 10000
         self.worksheet['B%s'% i].alignment = self.all_center
-        self.worksheet['C%s'% i] = instance.task.remark
+        self.worksheet['C%s'% i] = self.task.remark or '资金调拨'
         self.worksheet['C%s'% i].alignment = self.all_center
 
 
+class JiangxiTranExcel(TranExcel):
+    """
+    """
+    def header(self):
+        """
+        """
+        self.worksheet.merge_cells('A1:G1')
+        self.worksheet.cell(1,1).value = '付款单\r\n         %s' % self.task.date.strftime('%Y年%m月%d日')
+        self.worksheet['A1'].alignment = Alignment(horizontal='center', vertical='center', wrapText=True)
+        self.worksheet.row_dimensions[1].height = 40
+
+        self.worksheet['A2'] = '序号'
+        self.worksheet['B2'] = '收款方户名'
+        self.worksheet['C2'] = '收款方账户号'
+        self.worksheet['D2'] = '收款账户开户行名称'
+        self.worksheet['E2'] = '收款账号开户行行号'
+        self.worksheet['F2'] = '付款金额'
+        self.worksheet['G2'] = '资金用途'
+
+        # 设置居中效果
+        self.worksheet['A2'].alignment = self.all_center
+        self.worksheet['B2'].alignment = self.all_center
+        self.worksheet['C2'].alignment = self.all_center
+        self.worksheet['D2'].alignment = self.all_center
+        self.worksheet['E2'].alignment = self.all_center
+        self.worksheet['F2'].alignment = self.all_center
+        self.worksheet['G2'].alignment = self.all_center
+        
+        # 调整表格宽度
+        self.worksheet.column_dimensions['A'].width = 6*2+2
+        self.worksheet.column_dimensions['B'].width = 15+2
+        self.worksheet.column_dimensions['C'].width = 15+2
+        self.worksheet.column_dimensions['D'].width = 15+2
+        self.worksheet.column_dimensions['E'].width = 15+2
+        self.worksheet.column_dimensions['F'].width = 12+2
+        self.worksheet.column_dimensions['G'].width = 10+2
+
+    def insert(self, j, instance, account):
+        """
+        """
+        self.worksheet['A%s'% str(j+1)] = j-1
+        self.worksheet['A%s'% str(j+1)].alignment = self.all_center
+
+        self.worksheet['B%s'% str(j+1)] = account.account_name
+        self.worksheet['B%s'% str(j+1)].alignment = self.all_center
+
+        self.worksheet['C%s'% str(j+1)] = account.account
+        self.worksheet['C%s'% str(j+1)].alignment = self.all_center
+
+        self.worksheet['D%s'% str(j+1)] = account.bank_name
+        self.worksheet['D%s'% str(j+1)].alignment = self.all_center
+
+        self.worksheet['E%s'% str(j+1)] = account.bank_code
+        self.worksheet['E%s'% str(j+1)].alignment = self.all_center
+
+        self.worksheet['F%s'% str(j+1)] = instance.amount * 10000
+        self.worksheet['F%s'% str(j+1)].alignment = self.all_center
+
+        self.worksheet['G%s'% str(j+1)] = self.task.remark or '资金调拨'
+        self.worksheet['G%s'% str(j+1)].alignment = self.all_center
+
+        # 设置单元格格式为文本
+        self.worksheet['B%s'% str(j+1)].number_format = numbers.FORMAT_TEXT
+        self.worksheet['E%s'% str(j+1)].number_format = numbers.FORMAT_TEXT
+
+    def footer(self):
+        j = self.taskbatch.batch_total + 3
+        self.worksheet['A%s'% str(j)] = '合计（笔数）'
+        self.worksheet['A%s'% str(j)].alignment = self.all_center
+        self.worksheet['B%s'% str(j)] = j - 3 
+        self.worksheet['B%s'% str(j)].alignment = self.all_center
+
+        self.worksheet['E%s'% str(j)] = '合计（金额）'
+        self.worksheet['E%s'% str(j)].alignment = self.all_center
+        self.worksheet['F%s'% str(j)] = self.taskbatch.amount_total * 10000
+        self.worksheet['F%s'% str(j)].alignment = self.all_center
+    
+    def close(self):
+        self.footer()
+        self.workbook.save("{}{}".format(self.filepath, self.filename))
+
 class TranInfoExcel(CreateExcel):
     def __init__(self, taskbatch):
-        task = taskbatch.task
-        super(TranInfoExcel,self).__init__(task)
+        self.task = taskbatch.task
+        super(TranInfoExcel,self).__init__(self.task)
         self.filename_content = '{}-{}-转账信息-{}'.format(self.date_str, self.random_str, taskbatch.num)
         self.filename = '{}.xlsx'.format(self.filename_content)
 
@@ -169,7 +250,7 @@ class TranInfoExcel(CreateExcel):
         self.worksheet['E%s'% i].number_format = numbers.FORMAT_TEXT
         self.worksheet['E%s'% i] = instance.amount
         self.worksheet['E%s'% i].alignment = self.all_center
-        self.worksheet['F%s'% i] = instance.task.remark
+        self.worksheet['F%s'% i] = self.task.remark
         self.worksheet['F%s'% i].alignment = self.all_center
 
 

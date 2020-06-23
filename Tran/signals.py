@@ -4,7 +4,7 @@ from django.db.models.signals import post_save
 from Tran.models import Task, Transaction
 from Account.models import Account
 from Tran import utils as task_utils
-from Tran.excel import CreateExcel, FujianTranExcel, TranInfoExcel
+from Tran.excel import CreateExcel, FujianTranExcel, TranInfoExcel, JiangxiTranExcel
 
 
 @receiver(post_save, sender=Task)
@@ -22,7 +22,10 @@ def task_post_save(sender, instance=None, created=False, **kwargs):
         tran_huizong_excel.insert(taskbatch)
 
         # 初始化转账记录表
-        tran_excel = FujianTranExcel(taskbatch)
+        if instance.template == '1':
+            tran_excel = FujianTranExcel(taskbatch)
+        else:
+            tran_excel = JiangxiTranExcel(taskbatch)
 
         # 初始化转账信息表
         traninfo_excel = TranInfoExcel(taskbatch)
