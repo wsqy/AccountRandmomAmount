@@ -8,6 +8,7 @@ class DayBuyerAdmin:
     list_display = ['date', 'buyer', 'amount_total']
     list_filter = ['date', 'buyer']
     ordering =['-date', 'buyer_id']
+    model_icon = 'fa fa-tachometer'
 
     def has_add_permission(self):
         return False
@@ -16,6 +17,7 @@ class DaySellerAdmin:
     list_display = ['date', 'seller', 'amount_total']
     list_filter = ['date', 'seller']
     ordering =['-date', 'seller_id']
+    model_icon = 'fa fa-tachometer'
 
     def has_add_permission(self):
         return False
@@ -24,6 +26,7 @@ class MouthBuyerAdmin:
     list_display = ['date', 'buyer', 'amount_total']
     list_filter = ['date', 'buyer']
     ordering =['-date', 'buyer_id']
+    model_icon = 'fa fa-tachometer'
 
     def has_add_permission(self):
         return False
@@ -32,6 +35,7 @@ class MouthSellerAdmin:
     list_display = ['date', 'seller', 'amount_total']
     list_filter = ['date', 'seller']
     ordering =['-date', 'seller_id']
+    model_icon = 'fa fa-tachometer'
 
     def has_add_permission(self):
         return False

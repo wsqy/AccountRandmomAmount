@@ -14,6 +14,7 @@ class TaskAdmin:
     list_display = ['date', 'batch_total', 'status', 'download']
     # empty_value_display = '无'
     exclude = ['file_no',]
+    model_icon = 'fa fa-tasks'
 
     def get_context(self):
         context = super(TaskAdmin, self).get_context()
@@ -48,6 +49,7 @@ class TaskBatchAdmin:
     list_filter = ['task', ]
     readonly_fields = ['task', 'num', 'batch_total', 'amount_total',]
     empty_value_display = '无'
+    model_icon = 'fa fa-info'
 
     def has_add_permission(self):
         return False
@@ -67,6 +69,7 @@ class TransactionAdmin:
     list_filter = ['task', 'task_batch', ]
     readonly_fields = ['task', 'task_batch', 'buyer', 'seller', 'amount', ]
     empty_value_display = '无'
+    model_icon = 'fa fa-archive'
 
     def has_add_permission(self):
         return False

@@ -30,24 +30,28 @@ class CompanyAdmin:
     search_fields = ['name',]    
     import_excel = True
     inlines = [AccountInline, ]
+    model_icon = 'fa fa-credit-card'
 
 
 class BusinessScopeAdmin:
     list_display = ['id', 'name',]
     list_editable = ['name',]
     search_fields = ['name',]
+    model_icon = 'fa fa-credit-card'
 
 
 class BusinessCompanyAdmin:
     list_display = ['id', 'name',]
     list_editable = ['name',]
     search_fields = ['name',]
+    model_icon = 'fa fa-credit-card'
 
 
 class AccountAdmin:
     list_display = ['company', 'account_name', 'account', 'bank_name', 'bank_code']
     search_fields = ['company', 'account', 'bank_name', 'bank_code']
     import_excel = True
+    model_icon = 'fa fa-credit-card'
 
 
 class BuyerAdmin:
@@ -56,6 +60,7 @@ class BuyerAdmin:
     list_editable = ['scope', 'day_total_max_limit', 'mouth_total_max_limit']
     search_fields = ['name',]
     # inlines = [AccountInline, ]
+    model_icon = 'fa fa-credit-card'
 
 
 class SellerAdmin:
@@ -63,6 +68,7 @@ class SellerAdmin:
     list_editable = ['scope', 'day_total_max_limit', 'mouth_total_max_limit']
     search_fields = ['name',]
     # inlines = [AccountInline, ]
+    model_icon = 'fa fa-credit-card'
 
 
 xadmin.site.unregister(Log)
