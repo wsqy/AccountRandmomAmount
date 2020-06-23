@@ -40,7 +40,7 @@ class DayCompany(models.Model):
     集团子公司日交易额总量表
     """
     date = models.DateField(verbose_name='任务日期', default=timezone.now)
-    company = models.ForeignKey(Company, on_delete=models.PROTECT, verbose_name='卖方')
+    company = models.ForeignKey(Company, on_delete=models.PROTECT, verbose_name='集团子公司')
     amount_total = models.IntegerField(verbose_name='日总交易金额(万元)', default=0)
 
     class Meta:
@@ -88,7 +88,7 @@ class MouthCompany(models.Model):
     集团子公司月交易额总量表
     """
     date = models.CharField(max_length=8, verbose_name='月份')
-    company = models.ForeignKey(Company, on_delete=models.PROTECT, verbose_name='卖方')
+    company = models.ForeignKey(Company, on_delete=models.PROTECT, verbose_name='集团子公司')
     amount_total = models.IntegerField(verbose_name='月总交易金额(万元)', default=0)
 
     class Meta:
