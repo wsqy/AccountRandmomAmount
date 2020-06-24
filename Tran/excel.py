@@ -124,7 +124,7 @@ class JiangxiTranExcel(TranExcel):
         """
         """
         self.worksheet.merge_cells('A1:G1')
-        self.worksheet.cell(1,1).value = '付款单\r\n         %s' % self.task.date.strftime('%Y年%m月%d日')
+        self.worksheet.cell(row=1, column=1).value = '付款单\r\n         {}'.format(self.task.date.strftime('%Y年%m月%d日'))
         self.worksheet['A1'].alignment = Alignment(horizontal='center', vertical='center', wrapText=True)
         self.worksheet.row_dimensions[1].height = 40
 
