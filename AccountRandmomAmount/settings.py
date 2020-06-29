@@ -131,3 +131,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+DEFAULT_TRAN_MAX_AMOUNT = 950
+DEFAULT_TRAN_MIN_AMOUNT = 50
+
+

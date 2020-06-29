@@ -3,7 +3,7 @@ import string
 from .models import Task, TaskBatch, Transaction
 from Account.models import Buyer, Seller, Account
 from Statistics.models import DayBuyer, DaySeller, MouthBuyer, MouthSeller, DayCompany, MouthCompany
-
+from django.conf import settings 
 
 def random_int(len=5):
     return ''.join(random.sample(string.digits, len))
@@ -31,7 +31,7 @@ def taskbatch_add_one(task, _num):
         amount_total=random.randint(task.amount_total_min, task.amount_total_max)
     )
 
-def hongbao(_min=50, _max=950, total=0, num=0):
+def hongbao(_min=settings.DEFAULT_TRAN_MIN_AMOUNT, _max=settings.DEFAULT_TRAN_MAX_AMOUNT, total=0, num=0):
     hongbao_list = []
     if num < 1:
         return hongbao_list
@@ -59,7 +59,7 @@ def transaction_add_list(instance):
     num = instance.batch_total
     while True:
         hongbao_list = hongbao(total=amount, num=num)
-        if max(hongbao_list) < 950:
+        if max(hongbao_list) < settings.DEFAULT_TRAN_MAX_AMOUNT:
             break
     # 随机获取num个买方
     buyer_list = Buyer.objects.filter(scope=1).order_by('?')[:num]
