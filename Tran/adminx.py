@@ -2,6 +2,7 @@ import xadmin
 from django.utils.html import format_html
 from .models import Task, TaskBatch, Transaction
 from .utils import get_download_zipfile, get_download_excelfile
+from .forms import TaskForm
 
 
 
@@ -15,6 +16,7 @@ class TaskAdmin:
     # empty_value_display = '无'
     exclude = ['file_no',]
     model_icon = 'fa fa-tasks'
+    form = TaskForm
 
     def get_context(self):
         context = super(TaskAdmin, self).get_context()
