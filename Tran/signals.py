@@ -31,7 +31,10 @@ def task_post_save(sender, instance=None, created=False, **kwargs):
         traninfo_excel = TranInfoExcel(taskbatch)
 
         # 循环添加交易
-        for j, transaction in enumerate(task_utils.transaction_add_list(taskbatch), 2):
+        transaction_list = task_utils.transaction_add_list(taskbatch)
+        if not transaction_list:
+            return
+        for j, transaction in enumerate(transaction_list, 2):
             transaction.save()
             task_utils.transaction_add_statistics(transaction)
             # 转账记录表&转账信息表插入一条数据
