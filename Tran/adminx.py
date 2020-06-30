@@ -8,7 +8,10 @@ from .forms import TaskForm
 
 class TaskAdmin:
     def download(self, obj):
-        button_html = "<a class='changelink' href={}>下载</a>".format(get_download_zipfile(obj))
+        if obj.status:
+            button_html = "<a class='changelink' href={}>下载</a>".format(get_download_zipfile(obj))
+        else:
+            button_html = "<p class='changelink' >异常, 请检查条件重新添加任务</p>"
         return format_html(button_html)
     download.short_description = '下载汇总文件'
 
@@ -38,11 +41,17 @@ class TaskAdmin:
 
 class TaskBatchAdmin:
     def download_zz(self, obj):
-        button_html = "<a class='changelink' href={}>下载</a>".format(get_download_excelfile(obj, '转账文件'))
+        if obj.task.status:
+            button_html = "<a class='changelink' href={}>下载</a>".format(get_download_excelfile(obj, '转账文件'))
+        else:
+            button_html = "<p class='changelink' >异常, 请检查条件重新添加任务</p>"
         return format_html(button_html)
 
     def download_hz(self, obj):
-        button_html = "<a class='changelink' href={}>下载</a>".format(get_download_excelfile(obj, '转账信息'))
+        if obj.task.status:
+            button_html = "<a class='changelink' href={}>下载</a>".format(get_download_excelfile(obj, '转账信息'))
+        else:
+            button_html = "<p class='changelink' >异常, 请检查条件重新添加任务</p>"
         return format_html(button_html)
 
     download_zz.short_description = '下载转账文件'
