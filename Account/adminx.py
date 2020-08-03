@@ -2,7 +2,7 @@ import xadmin
 from django.utils.html import format_html
 from xadmin.models import Log
 
-from .models import Company, BusinessScope, BusinessCompany, Buyer, Seller, Account
+from .models import Company, BusinessScope, BusinessCompany, Buyer, Seller, Account, Products
 
 class BaseSetting:
     enable_themes = True
@@ -34,9 +34,17 @@ class CompanyAdmin:
 
 
 class BusinessScopeAdmin:
-    list_display = ['id', 'name',]
-    list_editable = ['name',]
-    search_fields = ['name',]
+    list_display = ['name', 'is_activate']
+    list_editable = ['name', 'is_activate']
+    search_fields = ['name', 'is_activate']
+    model_icon = 'fa fa-credit-card'
+
+
+class ProductsAdmin:
+    list_display = ['scope', 'name', 'type', 'price_min', 'price_max', 'unit', 'total_range', 'is_activate',]
+    list_filter = ['scope', 'name', 'total_range', 'is_activate',]
+    list_editable = ['scope', 'name', 'type', 'price_min', 'price_max', 'unit', 'total_range', 'is_activate',]
+    search_fields = ['scope', 'name', 'total_range', 'is_activate',]    
     model_icon = 'fa fa-credit-card'
 
 
@@ -75,6 +83,7 @@ xadmin.site.unregister(Log)
 xadmin.site.register(xadmin.views.CommAdminView, GlobalSettings)
 xadmin.site.register(Company, CompanyAdmin)
 xadmin.site.register(BusinessScope, BusinessScopeAdmin)
+xadmin.site.register(Products, ProductsAdmin)
 xadmin.site.register(Buyer, BuyerAdmin)
 xadmin.site.register(Seller, SellerAdmin)
 xadmin.site.register(Account, AccountAdmin)
