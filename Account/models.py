@@ -32,9 +32,36 @@ class BusinessScope(models.Model):
     经营分类
     """
     name = models.CharField(max_length=40, verbose_name='经营分类', blank=False, null=False, help_text='经营分类')
+    is_activate = models.BooleanField(default=True, verbose_name='状态',)
 
     class Meta:
         verbose_name = '经营分类'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name
+
+
+class Products(models.Model):
+    """
+    商品表
+    """
+    TOTAL = (
+        ('1', '200万以内'),
+        ('2', '200万-500万'),
+        ('3', '超过500万'),
+    )
+    scope = models.ForeignKey(BusinessScope, on_delete=models.PROTECT, verbose_name='分类', blank=False, null=False, help_text='大的经营分类')
+    name = models.CharField(max_length=40, verbose_name='商品名称', blank=False, null=False, help_text='商品名称')
+    type = models.CharField(max_length=511, verbose_name='商品型号', blank=False, null=False, help_text='商品型号')
+    price_min = models.PositiveIntegerField(verbose_name='单价下限', help_text='单价下限(包含)', blank=False, null=False)
+    price_max = models.PositiveIntegerField(verbose_name='单价上限', help_text='单价上限(包含)', blank=False, null=False)
+    unit = models.CharField(max_length=40, verbose_name='计量单位', blank=False, null=False, help_text='计量单位')
+    total_range = models.CharField(choices=TOTAL, max_length=1, verbose_name='总价范围', blank=False, null=False, help_text='总价范围')
+    is_activate = models.BooleanField(default=True, verbose_name='状态',)
+
+    class Meta:
+        verbose_name = '商品表'
         verbose_name_plural = verbose_name
 
     def __str__(self):
