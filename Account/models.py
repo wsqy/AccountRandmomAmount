@@ -1,6 +1,7 @@
 from django.db import models
 # from django.conf import settings
 from django.utils import timezone
+from django.conf.settings import TOTAL
 
 # Create your models here.
 
@@ -46,11 +47,6 @@ class Products(models.Model):
     """
     商品表
     """
-    TOTAL = (
-        ('1', '200万以内'),
-        ('2', '200万-500万'),
-        ('3', '超过500万'),
-    )
     scope = models.ForeignKey(BusinessScope, on_delete=models.PROTECT, verbose_name='分类', blank=False, null=False, help_text='大的经营分类')
     name = models.CharField(max_length=40, verbose_name='商品名称', blank=False, null=False, help_text='商品名称')
     type = models.CharField(max_length=511, verbose_name='商品型号', blank=False, null=False, help_text='商品型号')

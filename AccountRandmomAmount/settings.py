@@ -134,4 +134,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_TRAN_MAX_AMOUNT = 950
 DEFAULT_TRAN_MIN_AMOUNT = 50
 
-
+TOTAL = (
+    ('1', '200万以内'),
+    ('2', '200万-500万'),
+    ('3', '超过500万'),
+)
