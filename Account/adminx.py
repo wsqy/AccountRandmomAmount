@@ -52,9 +52,10 @@ class ProductsAdmin:
 
 
 class BusinessCompanyAdmin:
-    list_display = ['id', 'name',]
-    list_editable = ['name',]
-    search_fields = ['name',]
+    list_display = ['id', 'name', 'scope', 'registered_province']
+    list_editable = ['scope', ]
+    list_filter = ['scope', 'is_activate',]
+    search_fields = ['name', 'corporation', 'registered_province']
     model_icon = 'fa fa-credit-card'
 
 
@@ -75,10 +76,10 @@ class BuyerAdmin:
 
 
 class SellerAdmin:
-    list_display = ['name', 'scope', 'day_total_max_limit', 'mouth_total_max_limit', 'is_activate']
-    list_editable = ['scope', 'day_total_max_limit', 'mouth_total_max_limit']
-    search_fields = ['name',]
-    # inlines = [AccountInline, ]
+    list_display = ['id', 'name', 'scope', 'registered_province']
+    list_editable = ['scope', ]
+    list_filter = ['scope', 'is_activate', 'registered_province']
+    search_fields = ['name', 'corporation', 'registered_province']
     model_icon = 'fa fa-credit-card'
 
 

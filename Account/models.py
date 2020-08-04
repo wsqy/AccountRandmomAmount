@@ -6,7 +6,7 @@ from django.utils import timezone
 
 class Company(models.Model):
     """
-    子公司表
+    集团子公司表
     """
     
     CORPORATION = (
@@ -72,12 +72,15 @@ class BusinessCompany(models.Model):
     """
     交易公司表
     """
-    name = models.CharField(max_length=40, verbose_name='公司名称', blank=False, null=False, help_text='公司名称')
-    scope = models.ForeignKey(BusinessScope, on_delete=models.PROTECT, verbose_name='公司经营分类', blank=False, null=False, )
+    name = models.CharField(max_length=100, verbose_name='企业名称', blank=False, null=False, help_text='企业名称')
+    scope = models.ForeignKey(BusinessScope, on_delete=models.PROTECT, verbose_name='企业经营分类', blank=False, null=False, )
+    corporation = models.CharField(max_length=20, verbose_name='企业法人姓名', blank=True, null=True, help_text='企业法人姓名')
+    registered_capital = models.IntegerField(verbose_name='企业注册资金', blank=True, null=True, help_text='企业注册资金')
+    registered_capital_currency = models.CharField(max_length=10, verbose_name='注册资金币种', blank=True, null=True, help_text='注册资金币种', default='元人名币')
+    registered_province = models.CharField(max_length=15, verbose_name='注册省份', blank=True, null=True, help_text='注册省份')
+    telphone = models.CharField(max_length=15, verbose_name='企业办公电话', blank=True, null=True, help_text='企业办公电话')
     is_activate = models.BooleanField(default=True, verbose_name='状态', blank=False, null=False, )
-    mouth_total_max_limit = models.PositiveIntegerField(verbose_name='月上限(万元)', help_text='设置为0代表不设置上限', blank=False, null=False, default=0)
-    day_total_max_limit = models.PositiveIntegerField(verbose_name='日上限(万元)', help_text='设置为0代表不设置上限', blank=False, null=False, default=0)
-    
+
     class Meta:
         verbose_name = '交易公司'
         verbose_name_plural = verbose_name
@@ -90,11 +93,7 @@ class Buyer(BusinessCompany):
     """
     买方表
     """
-    # single_min = models.PositiveIntegerField(verbose_name='单笔交易下限(万元)', help_text='设置为0代表不设置下限',
-    #                                          default=50, blank=False, null=False, )
-    # single_max = models.PositiveIntegerField(verbose_name='单笔交易上限(万元)', help_text='设置为0代表不设置上限',
-    #                                          default=950, blank=False, null=False, )
-    company = models.ForeignKey(Company, on_delete=models.PROTECT, verbose_name='所属子公司')
+    company = models.ForeignKey(Company, on_delete=models.PROTECT, verbose_name='所属集团子公司')
     
     class Meta:
         verbose_name = '买方'
@@ -108,7 +107,6 @@ class Seller(BusinessCompany):
     """
     卖方表
     """
-
     class Meta:
         verbose_name = '卖方'
         verbose_name_plural = verbose_name
@@ -125,7 +123,7 @@ class Account(models.Model):
     account_name = models.CharField(max_length=40, verbose_name='账号名称', blank=False, null=False, help_text='账号名称')
     account = models.CharField(max_length=40, verbose_name='账号', blank=False, null=False, help_text='账号')
     bank_name = models.CharField(max_length=40, verbose_name='开户行名称', blank=False, null=False, help_text='开户行名称')
-    bank_code = models.CharField(max_length=40, verbose_name='开户行号', blank=False, null=False, help_text='开户行号')
+    bank_code = models.CharField(max_length=40, verbose_name='开户行联行号', blank=False, null=False, help_text='开户行联行号')
     class Meta:
         verbose_name = '账号'
         verbose_name_plural = verbose_name
