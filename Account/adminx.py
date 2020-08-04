@@ -34,17 +34,20 @@ class CompanyAdmin:
 
 
 class BusinessScopeAdmin:
-    list_display = ['name', 'is_activate']
+    list_display = ['id', 'name', 'is_activate']
+    list_display_links = ['id', 'name']
     list_editable = ['name', 'is_activate']
-    search_fields = ['name', 'is_activate']
+    search_fields = ['name',]
+    list_filter =['is_activate',]
     model_icon = 'fa fa-credit-card'
 
 
 class ProductsAdmin:
-    list_display = ['scope', 'name', 'type', 'price_min', 'price_max', 'unit', 'total_range', 'is_activate',]
-    list_filter = ['scope', 'name', 'total_range', 'is_activate',]
+    list_display = ['id', 'name','scope', 'type', 'price_min', 'price_max', 'unit', 'total_range', 'is_activate',]
+    list_display_links = ['id', 'name']
     list_editable = ['scope', 'name', 'type', 'price_min', 'price_max', 'unit', 'total_range', 'is_activate',]
-    search_fields = ['scope', 'name', 'total_range', 'is_activate',]    
+    list_filter = ['scope','total_range', 'is_activate',]
+    search_fields = ['name', 'type',]    
     model_icon = 'fa fa-credit-card'
 
 
