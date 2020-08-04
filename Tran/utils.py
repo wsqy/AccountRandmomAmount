@@ -1,8 +1,9 @@
 import random
 import string
 from .models import Task, TaskBatch, Transaction
-from Account.models import Buyer, Seller, Account
-from Statistics.models import DayBuyer, DaySeller, MouthBuyer, MouthSeller, DayCompany, MouthCompany
+from Account.models import Buyer, Seller, Account, Products
+from Statistics.models import (DayBuyer, DaySeller, MouthBuyer, MouthSeller,
+                                DayCompany, MouthCompany, DaySellerProducts)
 from django.conf import settings 
 from django.db.models import Q
 
@@ -50,6 +51,12 @@ def hongbao(_min=settings.DEFAULT_TRAN_MIN_AMOUNT, _max=settings.DEFAULT_TRAN_MA
     hongbao_list.append(totalMoney)
     return hongbao_list
 
+def get_total_range(amount):
+    if amount > 500:
+        return 3
+    elif amount < 200:
+        return 1
+    return 2
 
 def transaction_add_list(instance):
     amount = instance.amount_total
@@ -61,13 +68,24 @@ def transaction_add_list(instance):
     transaction_list = []
     _date = instance.task.date
     for i in range(num):
-        buyer = get_buyer(_date)
-        seller = get_seller(buyer, _date)
+        amount = hongbao_list[i]
+        total_range = get_total_range(amount)
+        products_list = Products.objects.filter(is_activate=True, total_range=total_range)
+        if products.count() == 0:
+            return
+        products = random.choice(products_list)
+        seller = get_seller(products.scope)
+        price = get_price(seller, products)
+        quantity = int(amount*10000/0.3/price)
+        buyer = get_buyer(products.scope)
         if (not buyer) or (not seller):
             return
         transaction_list.append(Transaction(task=instance.task, date=_date,
                                 buyer=buyer, seller=seller,
-                                amount=hongbao_list[i], task_batch=instance))
+                                amount=amount, task_batch=instance,
+                                price=price, products=products,
+                                total_range=total_range, quantity=quantity,
+                                tran_tatal=price*quantity))
     return transaction_list
 
 def transaction_add_statistics(transaction):
@@ -95,102 +113,41 @@ def transaction_add_statistics(transaction):
     mouthcompany.amount_total += transaction.amount
     mouthcompany.save()
 
-def check_buy_mouth(buyer, date):
-    """
-    """
-    # 否则月限额不是0:
-        # 本月已交易金额是否超出？重试:return buyer
-    # 如果月限额是0, 直接返回
-    if buyer.mouth_total_max_limit == 0:
-        return buyer
-    # 否则 月限额不是0
-    else:
-        try:
-            # 先看看有没有记录，有记录就判断是否超了
-            mouth_total = MouthBuyer.objects.get(buyer=buyer, date=date.strftime("%Y年%m月"))
-            # 本月已交易金额是否超出？重试:return buyer
-            if mouth_total.amount_total > buyer.mouth_total_max_limit:
-                return None
-            else:
-                return buyer
-        except Exception as e:
-            # 找不到数据说明本月还没有交易, 那肯定没超
-            return buyer
+    daysellerproducts = DaySellerProducts.objects.select_for_update().get_or_create(seller=transaction.seller, date=transaction.date, products=transaction.products)[0]
+    daysellerproducts.price = transaction.price
+    daysellerproducts.quantity += transaction.quantity
+    daysellerproducts.save()
 
-def get_buyer(date):
-    buy_list = Buyer.objects.filter(is_activate=True)
+def get_price(seller, products):
+    try:
+        transaction = Transaction.objects.get(seller=seller, products=products)
+        return transaction.price
+    except Exception as e:
+        return random.randint(Products.price_min, Products.price_max)
+
+
+def get_buyer(scope):
+    buy_list = Buyer.objects.filter(is_activate=True, scope=scope)
     if buy_list.count() == 0:
         return 
     nums = 0
     while True:
-        if nums > 10:
+        if nums > settings.SEARCH_BUSINESSCOMPANY_LIMIT:
             return 
         nums += 1
         buyer = random.choice(buy_list)
-        if buyer.day_total_max_limit == 0:
-            if check_buy_mouth(buyer, date):
-                return buyer
-            else:
-                continue
-        else:
-            # 否则 日限额不是0
-            try:
-                day_total = DayBuyer.objects.get(buyer=buyer, date=date)
-                if day_total.amount_total > buyer.day_total_max_limit:
-                    continue
-                else:
-                    # 月限额测试
-                    if check_buy_mouth(buyer, date):
-                        return buyer
-                    else:
-                        continue
-            except Exception as e:
-                return  buyer
+        mouth_total = MouthBuyer.objects.filter(buyer=buyer, total_range=total_range, date=date.strftime("%Y年%m月"))
+        if mouth_total < settings.TOTAL_RANGE_LIMIT.get(total_range):
+            return buyer
 
-def check_seller_mouth(seller, date):
-    """
-    """
-    if seller.mouth_total_max_limit == 0:
-        return seller
-    else:
-        try:
-            # 先看看有没有记录，有记录就判断是否超了
-            mouth_total = MouthSeller.objects.get(seller=seller, date=date.strftime("%Y年%m月"))
-            # 本月已交易金额是否超出？重试:return buyer
-            if mouth_total.amount_total > seller.mouth_total_max_limit:
-                return None
-            else:
-                return seller
-        except Exception as e:
-            # 找不到数据说明本月还没有交易, 那肯定没超
-            return seller
 
-def get_seller(buyer, date):
-    seller_list = Seller.objects.filter(is_activate=True, scope=buyer.scope)
+def get_seller(scope):
+    seller_list = Seller.objects.filter(is_activate=True, scope=scope)
     if seller_list.count() == 0:
         return 
     nums = 0
     while True:
-        if nums > 10:
+        if nums > settings.SEARCH_BUSINESSCOMPANY_LIMIT:
             return 
         nums += 1
-        seller = random.choice(seller_list)
-        if seller.day_total_max_limit == 0:
-            if check_seller_mouth(seller, date):
-                return seller
-            else:
-                continue
-        else:
-            # 否则 日限额不是0
-            try:
-                day_total = DaySeller.objects.get(seller=seller, date=date)
-                if day_total.amount_total > seller.day_total_max_limit:
-                    continue
-                else:
-                    # 月限额测试
-                    if check_seller_mouth(seller, date):
-                        return seller
-                    else:
-                        continue
-            except Exception as e:
-                return  seller
+        buyer = random.choice(seller_list)
