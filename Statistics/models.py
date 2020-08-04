@@ -1,7 +1,8 @@
+import random
 from django.db import models
 # from django.conf import settings
 from django.utils import timezone
-from Account.models import Buyer, Seller, Company
+from Account.models import Buyer, Seller, Company, Products
 
 class DayBuyer(models.Model):
     """
@@ -97,3 +98,26 @@ class MouthCompany(models.Model):
 
     def __str__(self):
         return '{}于{}总交易额{}万元'.format(self.company, self.date, self.amount_total)
+
+
+class DaySellerProducts(models.Model):
+    "卖方每日销售表"
+        
+    def random_choice_scale():
+        return random.randint(2, 10)
+
+    date = models.DateField(verbose_name='任务日期', default=timezone.now)
+    seller = models.ForeignKey(Seller, on_delete=models.PROTECT, verbose_name='卖方')
+    products = models.ForeignKey(Products, on_delete=models.PROTECT, verbose_name='购买商品')
+    price = models.PositiveIntegerField(verbose_name='购买单价', help_text='购买单价', blank=False, null=False)
+    quantity = models.PositiveIntegerField(verbose_name='订货量', help_text='订货量', blank=False, null=False)
+    choice_scale = models.PositiveIntegerField(verbose_name='备货比例', help_text='备货比例',
+                                                blank=False, null=False, default=random_choice_scale)
+
+    class Meta:
+        verbose_name = '卖方每日销售表'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return '{}于{}卖了{}{}{}'.format(self.seller, self.date, self.quantity,
+                                         self.products.unit, self.products.name)

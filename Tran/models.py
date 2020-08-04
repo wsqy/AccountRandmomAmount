@@ -3,11 +3,10 @@ import datetime
 from django.db import models
 from django.utils import timezone
 from Account.models import Buyer, Seller, Account, Products
-# from .utils import random_str
 import random
 import string
 
-from django.conf.settings import TOTAL
+from django.conf import settings
 
 def random_str(len=6):
     return ''.join(random.sample(string.ascii_letters + string.digits, len))
@@ -85,7 +84,7 @@ class Transaction(models.Model):
     seller = models.ForeignKey(Seller, on_delete=models.PROTECT, verbose_name='卖方')
     date = models.DateField(verbose_name='任务日期', blank=False,null=False, default=timezone.now)
     amount = models.IntegerField(verbose_name='定金金额', blank=False, null=False, help_text='交易定金金额')
-    total_range = models.CharField(choices=TOTAL, max_length=1, verbose_name='总价范围', blank=False, null=False, help_text='总价范围')
+    total_range = models.CharField(choices=settings.TOTAL, max_length=1, verbose_name='总价范围', blank=False, null=False, help_text='总价范围')
     products = models.ForeignKey(Products, on_delete=models.PROTECT, verbose_name='购买商品')
     price = models.PositiveIntegerField(verbose_name='购买单价', help_text='购买单价', blank=False, null=False)
     tran_tatal = models.IntegerField(verbose_name='订货金额', blank=False, null=False, help_text='交易定金金额')

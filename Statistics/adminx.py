@@ -1,7 +1,7 @@
 import xadmin
 from django.utils.html import format_html
 
-from .models import DayBuyer, DaySeller, MouthBuyer, MouthSeller, DayCompany, MouthCompany
+from .models import DayBuyer, DaySeller, MouthBuyer, MouthSeller, DayCompany, MouthCompany, DaySellerProducts
 
 
 class DayBuyerAdmin:
@@ -58,9 +58,18 @@ class MouthCompanyAdmin:
     def has_add_permission(self):
         return False
 
+class DaySellerProductsAdmin:
+    list_display = ['seller', 'date', 'products', 'price', 'quantity', 'choice_scale']
+    list_filter = ['date', 'seller']
+    model_icon = 'fa fa-tachometer'
+
+    def has_add_permission(self):
+        return False
+
 xadmin.site.register(DayBuyer, DayBuyerAdmin)
 xadmin.site.register(DaySeller, DaySellerAdmin)
 xadmin.site.register(MouthBuyer, MouthBuyerAdmin)
 xadmin.site.register(MouthSeller, MouthSellerAdmin)
 xadmin.site.register(DayCompany, DayCompanyAdmin)
 xadmin.site.register(MouthCompany, MouthCompanyAdmin)
+xadmin.site.register(DaySellerProducts, DaySellerProductsAdmin)
