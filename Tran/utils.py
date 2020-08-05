@@ -34,8 +34,12 @@ def taskbatch_add_one(task, _num):
             return 
         nums += 1
         batch_total=random.randint(task.batch_num_min, task.batch_num_max)
-        amount_total=random.randint(task.amount_total_min, task.amount_total_max)
-        if (batch_total * settings.DEFAULT_TRAN_MIN_AMOUNT < amount_total) and (batch_total * settings.DEFAULT_TRAN_MAX_AMOUNT > amount_total):
+        limit_min = batch_total * settings.DEFAULT_TRAN_MIN_AMOUNT
+        limit_max = batch_total * settings.DEFAULT_TRAN_MAX_AMOUNT
+        amount_total=random.randint(max(task.amount_total_min, limit_min), min(task.amount_total_max, limit_max))
+        print("OAAAAOOOO\n" * 2)
+        print(batch_total, amount_total)
+        if (limit_min < amount_total) and ( limit_max> amount_total):
             return TaskBatch(task=task, num=_num, batch_total=batch_total, amount_total=amount_total)
 
 def hongbao(_min=settings.DEFAULT_TRAN_MIN_AMOUNT, _max=settings.DEFAULT_TRAN_MAX_AMOUNT, total=0, num=0):
@@ -74,9 +78,9 @@ def transaction_add_list(instance):
     num = instance.batch_total
     nums = 0
     while True:
-        if nums > 50:
-            return 
-        nums += 1
+        # if nums > 50:
+        #     return 
+        # nums += 1
 
         hongbao_list = hongbao(total=amount, num=num)
         if max(hongbao_list) < settings.DEFAULT_TRAN_MAX_AMOUNT:

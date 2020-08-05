@@ -15,10 +15,12 @@ class TaskAdmin:
         return format_html(button_html)
     download.short_description = '下载汇总文件'
 
-    list_display = ['date', 'batch_total', 'corporation', 'status', 'download']
+    list_display = ['name', 'date', 'batch_total', 'corporation', 'status', 'download']
     # empty_value_display = '无'
     exclude = ['file_no',]
     model_icon = 'fa fa-tasks'
+    list_filter = ['corporation', 'status', 'date']
+    search_fields = ['name']
     form = TaskForm
 
     def get_context(self):

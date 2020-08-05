@@ -34,7 +34,7 @@ class Task(models.Model):
                               help_text='该备注信息会自动填充到每笔转账备注中')
     file_no = models.CharField(max_length=6, verbose_name='文件编号', blank=False,
                                null=False, default=random_str)
-    corporation =  models.ForeignKey(Corporation, on_delete=models.PROTECT, verbose_name='所属交易场所')
+    corporation =  models.ForeignKey(Corporation, on_delete=models.PROTECT, verbose_name='所属交易场所', default=1)
     
     class Meta:
         verbose_name = '每日任务'
