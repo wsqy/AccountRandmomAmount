@@ -1,0 +1,7 @@
+INSERT INTO "main"."Account_company" ("id", "name", "corporation", "is_activate") VALUES ('1', '公司1', '1', '1');
+INSERT INTO "main"."Account_company" ("id", "name", "corporation", "is_activate") VALUES ('2', '公司2', '1', '1');
+INSERT INTO "main"."Account_company" ("id", "name", "corporation", "is_activate") VALUES ('3', '公司3', '1', '1');
+INSERT INTO "main"."Account_company" ("id", "name", "corporation", "is_activate") VALUES ('4', '公司4', '1', '1');
+INSERT INTO "main"."Account_company" ("id", "name", "corporation", "is_activate") VALUES ('5', '公司5', '1', '1');
+INSERT INTO "main"."Account_company" ("id", "name", "corporation", "is_activate") VALUES ('6', '公司6', '1', '1');
+INSERT INTO "main"."Account_company" ("id", "name", "corporation", "is_activate") VALUES ('7', '公司7', '1', '1');

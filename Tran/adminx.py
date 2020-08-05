@@ -15,7 +15,7 @@ class TaskAdmin:
         return format_html(button_html)
     download.short_description = '下载汇总文件'
 
-    list_display = ['date', 'batch_total', 'status', 'download']
+    list_display = ['date', 'batch_total', 'corporation', 'status', 'download']
     # empty_value_display = '无'
     exclude = ['file_no',]
     model_icon = 'fa fa-tasks'

@@ -4,20 +4,34 @@ from django.utils import timezone
 
 # Create your models here.
 
+class Corporation(models.Model):
+    """
+    集团表
+    """
+    TEMPLATE = (
+        ('1', '福建模板'),
+        ('2', '江西模板'),
+    )
+    name = models.CharField(max_length=40, verbose_name='交易场所', blank=False, null=False, help_text='交易场所')
+    template = models.CharField(max_length=2, verbose_name='文件模板', choices=TEMPLATE,
+                                blank=False, null=False, default='1')
+    is_activate = models.BooleanField(default=True, verbose_name='状态', blank=True, null=True, help_text='该交易场所是否继续使用')
+
+    class Meta:
+        verbose_name = '交易场所'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name
+
+
 class Company(models.Model):
     """
     集团子公司表
     """
-    
-    CORPORATION = (
-        ('1', '默认集团'),
-    )
-    
-    name = models.CharField(max_length=40, verbose_name='子公司名称',
-                            blank=False, help_text='子公司名称')
-    corporation = models.CharField(max_length=2, blank=False, null=False, choices=CORPORATION, default='1',
-                                    verbose_name='所属集团', help_text='子公司所属集团, 默认1')
-    is_activate = models.BooleanField(default=True, verbose_name='状态',)
+    name = models.CharField(max_length=40, verbose_name='子公司名称', blank=False, help_text='子公司名称')
+    corporation = models.ForeignKey(Corporation, on_delete=models.PROTECT, verbose_name='所属集团', blank=False, null=False, help_text='子公司所属集团, 默认1')
+    is_activate = models.BooleanField(default=True, verbose_name='状态', blank=True, null=True, help_text='该公司是否继续使用')
 
     class Meta:
         verbose_name = '集团子公司'
@@ -32,7 +46,7 @@ class BusinessScope(models.Model):
     经营分类
     """
     name = models.CharField(max_length=40, verbose_name='经营分类', blank=False, null=False, help_text='经营分类')
-    is_activate = models.BooleanField(default=True, verbose_name='状态',)
+    is_activate = models.BooleanField(default=True, verbose_name='状态', blank=True, null=True, help_text='该分类是否继续使用')
 
     class Meta:
         verbose_name = '经营分类'
@@ -52,8 +66,8 @@ class Products(models.Model):
     price_min = models.PositiveIntegerField(verbose_name='单价下限', help_text='单价下限(包含)', blank=False, null=False)
     price_max = models.PositiveIntegerField(verbose_name='单价上限', help_text='单价上限(包含)', blank=False, null=False)
     unit = models.CharField(max_length=40, verbose_name='计量单位', blank=False, null=False, help_text='计量单位')
-    total_range = models.CharField(choices=settings.TOTAL_RANGE, max_length=1, verbose_name='总价范围', blank=False, null=False, help_text='总价范围')
-    is_activate = models.BooleanField(default=True, verbose_name='状态',)
+    total_range = models.CharField(choices=settings.TOTAL_RANGE, max_length=1, verbose_name='单笔定金范围', blank=False, null=False, help_text='单笔定金范围')
+    is_activate = models.BooleanField(default=True, verbose_name='状态', blank=True, null=True, help_text='该商品是否继续使用')
 
     class Meta:
         verbose_name = '商品表'
@@ -74,7 +88,7 @@ class BusinessCompany(models.Model):
     registered_capital_currency = models.CharField(max_length=10, verbose_name='注册资金币种', blank=True, null=True, help_text='注册资金币种', default='元人名币')
     registered_province = models.CharField(max_length=15, verbose_name='注册省份', blank=True, null=True, help_text='注册省份')
     telphone = models.CharField(max_length=15, verbose_name='企业办公电话', blank=True, null=True, help_text='企业办公电话')
-    is_activate = models.BooleanField(default=True, verbose_name='状态', blank=False, null=False, )
+    is_activate = models.BooleanField(default=True, verbose_name='状态', blank=True, null=True, help_text='该公司是否继续使用')
 
     class Meta:
         verbose_name = '交易公司'

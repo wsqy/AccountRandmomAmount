@@ -2,7 +2,7 @@ import xadmin
 from django.utils.html import format_html
 from xadmin.models import Log
 
-from .models import Company, BusinessScope, BusinessCompany, Buyer, Seller, Account, Products
+from .models import Company, BusinessScope, BusinessCompany, Buyer, Seller, Account, Products, Corporation
 
 class BaseSetting:
     enable_themes = True
@@ -67,24 +67,31 @@ class AccountAdmin:
 
 
 class BuyerAdmin:
-    list_display = ['name', 'scope', 'company', 'day_total_max_limit',
-                    'mouth_total_max_limit', 'is_activate', ]
-    list_editable = ['scope', 'day_total_max_limit', 'mouth_total_max_limit']
-    search_fields = ['name',]
-    # inlines = [AccountInline, ]
-    model_icon = 'fa fa-credit-card'
-
-
-class SellerAdmin:
-    list_display = ['id', 'name', 'scope', 'registered_province']
-    list_editable = ['scope', ]
-    list_filter = ['scope', 'is_activate', 'registered_province']
+    list_display = ['id', 'name', 'company', 'corporation', 'scope', 'registered_province', 'is_activate']
+    list_editable = ['scope', 'company', 'is_activate']
+    list_filter = ['scope', 'is_activate', 'company', 'registered_province']
     search_fields = ['name', 'corporation', 'registered_province']
     model_icon = 'fa fa-credit-card'
 
 
+class SellerAdmin:
+    list_display = ['id', 'name', 'corporation', 'scope', 'registered_province', 'is_activate']
+    list_editable = ['scope', 'is_activate']
+    list_filter = ['scope', 'is_activate', 'registered_province']
+    search_fields = ['name', 'corporation', 'registered_province']
+    model_icon = 'fa fa-credit-card'
+
+class CorporationAdmin:
+    list_display = ['id', 'name', 'template', 'is_activate']
+    list_display_links = ['id', 'name',]
+    list_editable = ['template', 'is_activate']
+    list_filter = ['template', 'is_activate',]
+    search_fields = ['name', 'template',]
+    model_icon = 'fa fa-credit-card'
+
 xadmin.site.unregister(Log)
 xadmin.site.register(xadmin.views.CommAdminView, GlobalSettings)
+xadmin.site.register(Corporation, CorporationAdmin)
 xadmin.site.register(Company, CompanyAdmin)
 xadmin.site.register(BusinessScope, BusinessScopeAdmin)
 xadmin.site.register(Products, ProductsAdmin)

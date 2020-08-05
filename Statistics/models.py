@@ -109,10 +109,10 @@ class DaySellerProducts(models.Model):
     date = models.DateField(verbose_name='任务日期', default=timezone.now)
     seller = models.ForeignKey(Seller, on_delete=models.PROTECT, verbose_name='卖方')
     products = models.ForeignKey(Products, on_delete=models.PROTECT, verbose_name='购买商品')
-    price = models.PositiveIntegerField(verbose_name='购买单价', help_text='购买单价', blank=False, null=False)
-    quantity = models.PositiveIntegerField(verbose_name='订货量', help_text='订货量', blank=False, null=False)
+    price = models.PositiveIntegerField(verbose_name='购买单价', help_text='购买单价', blank=True, null=True, default=0)
+    quantity = models.PositiveIntegerField(verbose_name='订货量', help_text='订货量', blank=True, null=True, default=0)
     choice_scale = models.PositiveIntegerField(verbose_name='备货比例', help_text='备货比例',
-                                                blank=False, null=False, default=random_choice_scale)
+                                                blank=True, null=True, default=random_choice_scale)
 
     class Meta:
         verbose_name = '卖方每日销售表'

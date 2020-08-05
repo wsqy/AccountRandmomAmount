@@ -67,25 +67,30 @@ def transaction_add_list(instance):
             break
     transaction_list = []
     _date = instance.task.date
+
     for i in range(num):
         amount = hongbao_list[i]
         total_range = get_total_range(amount)
         products_list = Products.objects.filter(is_activate=True, total_range=total_range)
-        if products.count() == 0:
+        if products_list.count() == 0:
             return
         products = random.choice(products_list)
         seller = get_seller(products.scope)
+        if not seller:
+            return
         price = get_price(seller, products)
         quantity = int(amount*10000/0.3/price)
-        buyer = get_buyer(products.scope)
-        if (not buyer) or (not seller):
+        buyer = get_buyer(products.scope, total_range, _date)
+        if not buyer:
             return
-        transaction_list.append(Transaction(task=instance.task, date=_date,
-                                buyer=buyer, seller=seller,
-                                amount=amount, task_batch=instance,
-                                price=price, products=products,
-                                total_range=total_range, quantity=quantity,
-                                tran_tatal=price*quantity))
+        transaction = Transaction(task=instance.task, date=_date,
+                                    buyer=buyer, seller=seller,
+                                    amount=amount, task_batch=instance,
+                                    price=price, products=products,
+                                    total_range=total_range, quantity=quantity,
+                                    tran_tatal=price*quantity)    
+        transaction.save()    
+        transaction_list.append(transaction)
     return transaction_list
 
 def transaction_add_statistics(transaction):
@@ -115,7 +120,7 @@ def transaction_add_statistics(transaction):
 
     daysellerproducts = DaySellerProducts.objects.select_for_update().get_or_create(seller=transaction.seller, date=transaction.date, products=transaction.products)[0]
     daysellerproducts.price = transaction.price
-    daysellerproducts.quantity += transaction.quantity
+    daysellerproducts.quantity += int(transaction.quantity)
     daysellerproducts.save()
 
 def get_price(seller, products):
@@ -123,10 +128,10 @@ def get_price(seller, products):
         transaction = Transaction.objects.get(seller=seller, products=products)
         return transaction.price
     except Exception as e:
-        return random.randint(Products.price_min, Products.price_max)
+        return random.randint(products.price_min, products.price_max)
 
 
-def get_buyer(scope):
+def get_buyer(scope, total_range, date):
     buy_list = Buyer.objects.filter(is_activate=True, scope=scope)
     if buy_list.count() == 0:
         return 
@@ -136,8 +141,10 @@ def get_buyer(scope):
             return 
         nums += 1
         buyer = random.choice(buy_list)
-        mouth_total = MouthBuyer.objects.filter(buyer=buyer, total_range=total_range, date=date.strftime("%Y年%m月"))
-        if mouth_total < settings.TOTAL_RANGE_LIMIT.get(total_range):
+        _year = date.year
+        _month = date.month
+        mouth_total = Transaction.objects.filter(buyer=buyer, total_range=total_range, date__month=_month, date__year=_year).count()
+        if mouth_total < settings.TOTAL_RANGE_LIMIT.get(str(total_range)):
             return buyer
 
 
@@ -150,4 +157,5 @@ def get_seller(scope):
         if nums > settings.SEARCH_BUSINESSCOMPANY_LIMIT:
             return 
         nums += 1
-        buyer = random.choice(seller_list)
+        return random.choice(seller_list)
+        

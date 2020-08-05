@@ -22,7 +22,7 @@ def task_post_save(sender, instance=None, created=False, **kwargs):
         tran_huizong_excel.insert(taskbatch)
 
         # 初始化转账记录表
-        if instance.template == '1':
+        if instance.corporation.template == '1':
             tran_excel = FujianTranExcel(taskbatch)
         else:
             tran_excel = JiangxiTranExcel(taskbatch)
@@ -33,14 +33,17 @@ def task_post_save(sender, instance=None, created=False, **kwargs):
         # 循环添加交易
         transaction_list = task_utils.transaction_add_list(taskbatch)
         if not transaction_list:
+            # 异常退出
+            traninfo_excel.close()
+            tran_huizong_excel.close()
             return
         for j, transaction in enumerate(transaction_list, 2):
-            transaction.save()
+            # transaction.save()
             task_utils.transaction_add_statistics(transaction)
-            # 转账记录表&转账信息表插入一条数据
-            account = Account.objects.filter(company=transaction.buyer.company).order_by('?').first()
-            tran_excel.insert(j, transaction, account)
-            traninfo_excel.insert(j, transaction)
+            # # 转账记录表&转账信息表插入一条数据
+            # account = Account.objects.filter(company=transaction.buyer.company).order_by('?').first()
+            # tran_excel.insert(j, transaction, account)
+            # traninfo_excel.insert(j, transaction)
         # 写入转账记录表&转账信息表
         tran_excel.close() 
         traninfo_excel.close()

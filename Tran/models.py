@@ -2,7 +2,7 @@ import time
 import datetime
 from django.db import models
 from django.utils import timezone
-from Account.models import Buyer, Seller, Account, Products
+from Account.models import Buyer, Seller, Account, Products, Corporation
 import random
 import string
 
@@ -15,10 +15,6 @@ class Task(models.Model):
     """
     每日任务表
     """
-    TEMPLATE = (
-        ('1', '福建模板'),
-        ('2', '江西模板'),
-    )
     date = models.DateField(verbose_name='任务日期', blank=False,null=False,
                             default=timezone.now, )
     name = models.CharField(max_length=40, verbose_name='任务名称', blank=True, null=True,
@@ -38,8 +34,7 @@ class Task(models.Model):
                               help_text='该备注信息会自动填充到每笔转账备注中')
     file_no = models.CharField(max_length=6, verbose_name='文件编号', blank=False,
                                null=False, default=random_str)
-    template = models.CharField(max_length=2, verbose_name='文件模板', choices=TEMPLATE,
-                                blank=False,null=False, default='1')
+    corporation =  models.ForeignKey(Corporation, on_delete=models.PROTECT, verbose_name='所属交易场所')
     
     class Meta:
         verbose_name = '每日任务'
