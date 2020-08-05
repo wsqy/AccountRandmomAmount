@@ -12,8 +12,8 @@ class Corporation(models.Model):
         ('1', '福建模板'),
         ('2', '江西模板'),
     )
-    name = models.CharField(max_length=40, verbose_name='交易场所', blank=False, null=False, help_text='交易场所')
-    template = models.CharField(max_length=2, verbose_name='文件模板', choices=TEMPLATE,
+    name = models.CharField(max_length=40, verbose_name='交易场所名称', blank=False, null=False, help_text='交易场所')
+    template = models.CharField(max_length=2, verbose_name='转账文件模板', choices=TEMPLATE,
                                 blank=False, null=False, default='1')
     is_activate = models.BooleanField(default=True, verbose_name='状态', blank=True, null=True, help_text='该交易场所是否继续使用')
 
@@ -63,8 +63,8 @@ class Products(models.Model):
     scope = models.ForeignKey(BusinessScope, on_delete=models.PROTECT, verbose_name='分类', blank=False, null=False, help_text='大的经营分类')
     name = models.CharField(max_length=40, verbose_name='商品名称', blank=False, null=False, help_text='商品名称')
     type = models.CharField(max_length=511, verbose_name='商品型号', blank=False, null=False, help_text='商品型号')
-    price_min = models.PositiveIntegerField(verbose_name='单价下限', help_text='单价下限(包含)', blank=False, null=False)
-    price_max = models.PositiveIntegerField(verbose_name='单价上限', help_text='单价上限(包含)', blank=False, null=False)
+    price_min = models.PositiveIntegerField(verbose_name='单价下限', help_text='单价下限(元)', blank=False, null=False)
+    price_max = models.PositiveIntegerField(verbose_name='单价上限', help_text='单价上限(元)', blank=False, null=False)
     unit = models.CharField(max_length=40, verbose_name='计量单位', blank=False, null=False, help_text='计量单位')
     total_range = models.CharField(choices=settings.TOTAL_RANGE, max_length=1, verbose_name='单笔定金范围', blank=False, null=False, help_text='单笔定金范围')
     is_activate = models.BooleanField(default=True, verbose_name='状态', blank=True, null=True, help_text='该商品是否继续使用')
@@ -84,7 +84,7 @@ class BusinessCompany(models.Model):
     name = models.CharField(max_length=100, verbose_name='企业名称', blank=False, null=False, help_text='企业名称')
     scope = models.ForeignKey(BusinessScope, on_delete=models.PROTECT, verbose_name='企业经营分类', blank=False, null=False, )
     corporation = models.CharField(max_length=20, verbose_name='企业法人姓名', blank=True, null=True, help_text='企业法人姓名')
-    registered_capital = models.IntegerField(verbose_name='企业注册资金', blank=True, null=True, help_text='企业注册资金')
+    registered_capital = models.IntegerField(verbose_name='企业注册资金(元)', blank=True, null=True, help_text='企业注册资金')
     registered_capital_currency = models.CharField(max_length=10, verbose_name='注册资金币种', blank=True, null=True, help_text='注册资金币种', default='元人名币')
     registered_province = models.CharField(max_length=15, verbose_name='注册省份', blank=True, null=True, help_text='注册省份')
     telphone = models.CharField(max_length=15, verbose_name='企业办公电话', blank=True, null=True, help_text='企业办公电话')

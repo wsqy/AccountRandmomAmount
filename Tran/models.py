@@ -19,10 +19,10 @@ class Task(models.Model):
                             default=timezone.now, )
     name = models.CharField(max_length=40, verbose_name='任务名称', blank=True, null=True,
                             help_text='同一日有多个任务最好设置本次任务名称')
-    amount_total_min = models.PositiveIntegerField(verbose_name='每日总金额下限',
-                                                   blank=False, null=False, )
-    amount_total_max = models.PositiveIntegerField(verbose_name='每日总金额上限',
-                                                   blank=False, null=False, )
+    amount_total_min = models.PositiveIntegerField(verbose_name='每日总金额下限(万元)',
+                                                   blank=False, null=False, default=2000)
+    amount_total_max = models.PositiveIntegerField(verbose_name='每日总金额上限(万元)',
+                                                   blank=False, null=False, default=4000)
     batch_total = models.PositiveSmallIntegerField(verbose_name='批次数', default=30,
                                                    blank=False, null=False,)
     batch_num_min = models.PositiveSmallIntegerField(verbose_name='每批次交易笔数下限',
@@ -55,7 +55,7 @@ class TaskBatch(models.Model):
     任务批次表
     """
     task = models.ForeignKey(Task, on_delete=models.PROTECT, verbose_name='所属日任务')
-    amount_total = models.PositiveIntegerField(verbose_name='批次总金额',
+    amount_total = models.PositiveIntegerField(verbose_name='批次总金额(万元)',
                                                 blank=False, null=False, )
     batch_total = models.PositiveSmallIntegerField(verbose_name='批次交易笔数',
                                                     blank=False, null=False, default=3)
@@ -78,11 +78,11 @@ class Transaction(models.Model):
     buyer = models.ForeignKey(Buyer, on_delete=models.PROTECT, verbose_name='买方')
     seller = models.ForeignKey(Seller, on_delete=models.PROTECT, verbose_name='卖方')
     date = models.DateField(verbose_name='任务日期', blank=False,null=False, default=timezone.now)
-    amount = models.IntegerField(verbose_name='定金金额', blank=False, null=False, help_text='交易定金金额')
+    amount = models.IntegerField(verbose_name='定金金额(万元)', blank=False, null=False, help_text='交易定金金额')
     total_range = models.CharField(choices=settings.TOTAL_RANGE, max_length=1, verbose_name='总价范围', blank=False, null=False, help_text='总价范围')
     products = models.ForeignKey(Products, on_delete=models.PROTECT, verbose_name='购买商品')
-    price = models.PositiveIntegerField(verbose_name='购买单价', help_text='购买单价', blank=False, null=False)
-    tran_tatal = models.IntegerField(verbose_name='订货金额', blank=False, null=False, help_text='交易定金金额')
+    price = models.PositiveIntegerField(verbose_name='购买单价(元)', help_text='购买单价', blank=False, null=False)
+    tran_tatal = models.IntegerField(verbose_name='订货金额(万元)', blank=False, null=False, help_text='交易定金金额')
     quantity = models.PositiveIntegerField(verbose_name='订货量', help_text='订货量', blank=False, null=False)
 
     class Meta:

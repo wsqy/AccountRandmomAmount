@@ -28,10 +28,15 @@ def get_download_excelfile(instance, type='转账文件'):
     return '{}{}-{}-{}.xlsx'.format(filepath, filename_content, type, instance.num)
 
 def taskbatch_add_one(task, _num):
-    return TaskBatch(task=task, num=_num,
-        batch_total=random.randint(task.batch_num_min, task.batch_num_max),
+    nums = 0
+    while True:
+        if nums > 50:
+            return 
+        nums += 1
+        batch_total=random.randint(task.batch_num_min, task.batch_num_max)
         amount_total=random.randint(task.amount_total_min, task.amount_total_max)
-    )
+        if (batch_total * settings.DEFAULT_TRAN_MIN_AMOUNT < amount_total) and (batch_total * settings.DEFAULT_TRAN_MAX_AMOUNT > amount_total):
+            return TaskBatch(task=task, num=_num, batch_total=batch_total, amount_total=amount_total)
 
 def hongbao(_min=settings.DEFAULT_TRAN_MIN_AMOUNT, _max=settings.DEFAULT_TRAN_MAX_AMOUNT, total=0, num=0):
     hongbao_list = []
@@ -58,37 +63,49 @@ def get_total_range(amount):
         return 1
     return 2
 
+def get_products(total_range):
+    products_list = Products.objects.filter(is_activate=True, total_range=total_range)
+    if products_list.count() == 0:
+        return
+    return random.choice(products_list)
+
 def transaction_add_list(instance):
     amount = instance.amount_total
     num = instance.batch_total
+    nums = 0
     while True:
+        if nums > 50:
+            return 
+        nums += 1
+
         hongbao_list = hongbao(total=amount, num=num)
         if max(hongbao_list) < settings.DEFAULT_TRAN_MAX_AMOUNT:
             break
     transaction_list = []
     _date = instance.task.date
-
+    # print('--__++----\n' * 2)
     for i in range(num):
         amount = hongbao_list[i]
         total_range = get_total_range(amount)
-        products_list = Products.objects.filter(is_activate=True, total_range=total_range)
-        if products_list.count() == 0:
+        products = get_products(total_range)
+        if not products:
             return
-        products = random.choice(products_list)
         seller = get_seller(products.scope)
         if not seller:
             return
         price = get_price(seller, products)
         quantity = int(amount*10000/0.3/price)
         buyer = get_buyer(products.scope, total_range, _date)
+        # print('------\n' * 2)
         if not buyer:
             return
+        # print('--__88888---\n' * 2)
         transaction = Transaction(task=instance.task, date=_date,
                                     buyer=buyer, seller=seller,
                                     amount=amount, task_batch=instance,
                                     price=price, products=products,
                                     total_range=total_range, quantity=quantity,
-                                    tran_tatal=price*quantity)    
+                                    tran_tatal=int(price*quantity/10000))    
         transaction.save()    
         transaction_list.append(transaction)
     return transaction_list
@@ -120,7 +137,7 @@ def transaction_add_statistics(transaction):
 
     daysellerproducts = DaySellerProducts.objects.select_for_update().get_or_create(seller=transaction.seller, date=transaction.date, products=transaction.products)[0]
     daysellerproducts.price = transaction.price
-    daysellerproducts.quantity += int(transaction.quantity)
+    daysellerproducts.quantity += (int(transaction.quantity) * int(daysellerproducts.choice_scale))
     daysellerproducts.save()
 
 def get_price(seller, products):

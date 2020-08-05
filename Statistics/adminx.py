@@ -59,7 +59,7 @@ class MouthCompanyAdmin:
         return False
 
 class DaySellerProductsAdmin:
-    list_display = ['seller', 'date', 'products', 'price', 'quantity', 'choice_scale']
+    list_display = ['seller', 'products', 'price', 'quantity',]
     list_filter = ['date', 'seller']
     model_icon = 'fa fa-tachometer'
 
