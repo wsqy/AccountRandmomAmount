@@ -60,6 +60,34 @@ def hongbao(_min=settings.DEFAULT_TRAN_MIN_AMOUNT, _max=settings.DEFAULT_TRAN_MA
     hongbao_list.append(totalMoney)
     return hongbao_list
 
+def merge_hongbao(hongbao_list):
+    hongbao_list.sort()
+    _len = len(hongbao_list)
+    all_max = settings.DEFAULT_TRAN_MAX_AMOUNT
+    all_min = settings.DEFAULT_TRAN_MIN_AMOUNT
+
+    while True:
+        if hongbao_list[-1] > all_max:
+            out_flow = hongbao_list[-1] - all_max
+            hongbao_list[-1] -= out_flow
+            for i in range(_len-1):
+                if hongbao_list[i] < all_max:
+                    redu = random.randint(1, all_max-hongbao_list[i])
+                    hongbao_list[i] += redu
+                    out_flow -= redu 
+        elif hongbao_list[0] < all_min:
+            out_flow = all_min - hongbao_list[0]
+            ongbao_list[0] += out_flow
+            for i in range(_len):
+                if hongbao_list[i] > all_min:
+                    redu = random.randint(1, all_max-hongbao_list[i])
+                    hongbao_list[i] -= redu
+                    out_flow -= redu 
+        else:
+            random.shuffle(hongbao_list)
+            return hongbao_list
+        
+
 def get_total_range(amount):
     if amount > 500:
         return 3
@@ -67,8 +95,8 @@ def get_total_range(amount):
         return 1
     return 2
 
-def get_products(total_range):
-    products_list = Products.objects.filter(is_activate=True, total_range=total_range)
+def get_products(total_range, scope):
+    products_list = Products.objects.filter(is_activate=True, total_range=total_range, scope=scope)
     if products_list.count() == 0:
         return
     return random.choice(products_list)
@@ -76,34 +104,31 @@ def get_products(total_range):
 def transaction_add_list(instance):
     amount = instance.amount_total
     num = instance.batch_total
-    nums = 0
-    while True:
-        # if nums > 50:
-        #     return 
-        # nums += 1
-
-        hongbao_list = hongbao(total=amount, num=num)
-        if max(hongbao_list) < settings.DEFAULT_TRAN_MAX_AMOUNT:
-            break
+    hongbao_list = hongbao(total=amount, num=num)
+    hongbao_list = merge_hongbao(hongbao_list)
+    print('-ZZ--\n' * 2)
+    print(hongbao_list)
     transaction_list = []
     _date = instance.task.date
-    # print('--__++----\n' * 2)
+    print('--__++----\n' * 2)
     for i in range(num):
         amount = hongbao_list[i]
         total_range = get_total_range(amount)
-        products = get_products(total_range)
+        buyer = get_buyer(total_range, _date)
+        print('------\n' * 2)
+        if not buyer:
+            return
+        print('--__88888---\n' * 2)
+        scope = buyer.scope
+        products = get_products(total_range, scope)
         if not products:
             return
-        seller = get_seller(products.scope)
+        seller = get_seller(scope)
         if not seller:
             return
         price = get_price(seller, products)
         quantity = int(amount*10000/0.3/price)
-        buyer = get_buyer(products.scope, total_range, _date)
-        # print('------\n' * 2)
-        if not buyer:
-            return
-        # print('--__88888---\n' * 2)
+
         transaction = Transaction(task=instance.task, date=_date,
                                     buyer=buyer, seller=seller,
                                     amount=amount, task_batch=instance,
@@ -152,8 +177,8 @@ def get_price(seller, products):
         return random.randint(products.price_min, products.price_max)
 
 
-def get_buyer(scope, total_range, date):
-    buy_list = Buyer.objects.filter(is_activate=True, scope=scope)
+def get_buyer(total_range, date):
+    buy_list = Buyer.objects.filter(is_activate=True, total_range=total_range)
     if buy_list.count() == 0:
         return 
     nums = 0
@@ -165,7 +190,7 @@ def get_buyer(scope, total_range, date):
         _year = date.year
         _month = date.month
         mouth_total = Transaction.objects.filter(buyer=buyer, total_range=total_range, date__month=_month, date__year=_year).count()
-        if mouth_total < settings.TOTAL_RANGE_LIMIT.get(str(total_range)):
+        if mouth_total < buyer.mouth_buy_limit:
             return buyer
 
 

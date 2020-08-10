@@ -4,7 +4,7 @@ from django.utils import timezone
 
 # Create your models here.
 
-class Corporation(models.Model):
+class Corporation(models.Model):    
     """
     集团表
     """
@@ -103,6 +103,8 @@ class Buyer(BusinessCompany):
     买方表
     """
     company = models.ForeignKey(Company, on_delete=models.PROTECT, verbose_name='所属集团子公司')
+    mouth_buy_limit = models.PositiveSmallIntegerField(verbose_name='每月交易上限', blank=True, null=True, default=5, help_text='买方每月交易笔数上限')
+    total_range = models.CharField(choices=settings.TOTAL_RANGE, max_length=1, verbose_name='单笔定金范围', blank=False, null=False, help_text='单笔定金范围')
     
     class Meta:
         verbose_name = '买方'
@@ -129,10 +131,13 @@ class Account(models.Model):
     账号表
     """
     company = models.ForeignKey(Company, on_delete=models.PROTECT, verbose_name='所属集团子公司')
-    account_name = models.CharField(max_length=40, verbose_name='账号名称', blank=False, null=False, help_text='账号名称')
-    account = models.CharField(max_length=40, verbose_name='账号', blank=False, null=False, help_text='账号')
-    bank_name = models.CharField(max_length=40, verbose_name='开户行名称', blank=False, null=False, help_text='开户行名称')
-    bank_code = models.CharField(max_length=40, verbose_name='开户行联行号', blank=False, null=False, help_text='开户行联行号')
+    account_name = models.CharField(max_length=40, verbose_name='账号名称', blank=True, null=True, help_text='账号名称')
+    account = models.CharField(max_length=40, verbose_name='账号', blank=True, null=True, help_text='账号')
+    bank_name = models.CharField(max_length=40, verbose_name='开户行名称', blank=True, null=True, help_text='开户行名称')
+    bank_code = models.CharField(max_length=40, verbose_name='开户行联行号', blank=True, null=True, help_text='开户行联行号')
+    is_activate = models.BooleanField(default=True, verbose_name='状态', blank=True, null=True, help_text='该账户是否使用')
+    is_corporate = models.BooleanField(default=False, verbose_name='是否对公户', blank=True, null=True, help_text='该账户是否是对公户, 勾选代表是对公户, 取消勾选代表是单位结算卡(默认)')
+
     class Meta:
         verbose_name = '账号'
         verbose_name_plural = verbose_name

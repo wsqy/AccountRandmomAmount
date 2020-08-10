@@ -24,7 +24,8 @@ class AccountInline:
 
 
 class CompanyAdmin:
-    list_display = ['name', 'corporation', 'is_activate',]
+    list_display = ['id', 'name', 'corporation', 'is_activate',]
+    list_display_links = ['id', 'name']
     list_filter = ['corporation', 'is_activate',]
     list_editable = ['name',]
     search_fields = ['name',]    
@@ -60,22 +61,26 @@ class BusinessCompanyAdmin:
 
 
 class AccountAdmin:
-    list_display = ['company', 'account_name', 'account', 'bank_name', 'bank_code']
-    search_fields = ['company', 'account', 'bank_name', 'bank_code']
-    import_excel = True
+    list_display = ['id', 'account_name', 'account', 'company', 'is_activate']
+    list_display_links = ['id', 'account_name']
+    search_fields = ['company', 'account', 'bank_code']
+    list_filter = ['is_activate', 'company', ]
+    # import_excel = True
     model_icon = 'fa fa-credit-card'
 
 
 class BuyerAdmin:
-    list_display = ['id', 'name', 'company', 'corporation', 'scope', 'registered_province', 'is_activate']
-    list_editable = ['scope', 'company', 'is_activate']
-    list_filter = ['scope', 'is_activate', 'company', 'registered_province']
+    list_display = ['id', 'name', 'company', 'scope', 'mouth_buy_limit', 'total_range', 'is_activate']
+    list_display_links = ['id', 'name']
+    list_editable = ['scope', 'company', 'mouth_buy_limit', 'total_range', 'is_activate']
+    list_filter = ['scope', 'is_activate', 'company', 'mouth_buy_limit', 'total_range', 'registered_province']
     search_fields = ['name', 'corporation', 'registered_province']
     model_icon = 'fa fa-credit-card'
 
 
 class SellerAdmin:
-    list_display = ['id', 'name', 'corporation', 'scope', 'registered_province', 'is_activate']
+    list_display = ['id', 'name', 'scope', 'is_activate']
+    list_display_links = ['id', 'name']
     list_editable = ['scope', 'is_activate']
     list_filter = ['scope', 'is_activate', 'registered_province']
     search_fields = ['name', 'corporation', 'registered_province']

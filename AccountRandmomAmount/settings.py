@@ -135,7 +135,7 @@ DEFAULT_TRAN_MAX_AMOUNT = 950
 DEFAULT_TRAN_MIN_AMOUNT = 50
 
 # 最大寻找买卖方的次数
-SEARCH_BUSINESSCOMPANY_LIMIT = 10
+SEARCH_BUSINESSCOMPANY_LIMIT = 20
 
 
 TOTAL_RANGE = (
@@ -143,9 +143,3 @@ TOTAL_RANGE = (
     ('2', '200万-500万'),
     ('3', '超过500万'),
 )
-
-TOTAL_RANGE_LIMIT = {
-    '1': 3,
-    '2': 5,
-    '3': 10,
-}

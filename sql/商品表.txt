@@ -1,3 +1,14 @@
+INSERT INTO "main"."Account_businessscope" ("id", "name", "is_activate") VALUES ('1', '纺织', '1');
+INSERT INTO "main"."Account_businessscope" ("id", "name", "is_activate") VALUES ('2', '钢铁', '1');
+INSERT INTO "main"."Account_businessscope" ("id", "name", "is_activate") VALUES ('3', '化工', '1');
+INSERT INTO "main"."Account_businessscope" ("id", "name", "is_activate") VALUES ('4', '建材', '1');
+INSERT INTO "main"."Account_businessscope" ("id", "name", "is_activate") VALUES ('5', '矿产', '1');
+INSERT INTO "main"."Account_businessscope" ("id", "name", "is_activate") VALUES ('6', '能源', '1');
+INSERT INTO "main"."Account_businessscope" ("id", "name", "is_activate") VALUES ('7', '农副', '1');
+INSERT INTO "main"."Account_businessscope" ("id", "name", "is_activate") VALUES ('8', '其他', '1');
+INSERT INTO "main"."Account_businessscope" ("id", "name", "is_activate") VALUES ('9', '橡塑', '1');
+INSERT INTO "main"."Account_businessscope" ("id", "name", "is_activate") VALUES ('10', '有色金属', '1');
+
 INSERT INTO "main"."Account_products" ("id", "name", "type", "price_min", "price_max", "unit", "total_range", "is_activate", "scope_id") VALUES ('1', '铅锌矿', '铅锌矿', '300', '3000', '吨', '2', '1', '5');
 INSERT INTO "main"."Account_products" ("id", "name", "type", "price_min", "price_max", "unit", "total_range", "is_activate", "scope_id") VALUES ('2', '铁矿', '铁矿', '100', '500', '吨', '2', '1', '5');
 INSERT INTO "main"."Account_products" ("id", "name", "type", "price_min", "price_max", "unit", "total_range", "is_activate", "scope_id") VALUES ('3', '铜矿', '铜矿', '3000', '5000', '吨', '2', '1', '5');

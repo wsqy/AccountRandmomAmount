@@ -59,8 +59,20 @@ class MouthCompanyAdmin:
         return False
 
 class DaySellerProductsAdmin:
-    list_display = ['seller', 'products', 'price', 'quantity',]
-    list_filter = ['date', 'seller']
+    def products_name(self, obj):
+        return obj.products.name
+    products_name.short_description = '货物名称'
+
+    def products_type(self, obj):
+        return obj.products.type
+    products_type.short_description = '货物型号'
+
+    def products_scope_name(self, obj):
+        return obj.products.scope.name
+    products_scope_name.short_description = '货物类别'
+
+    list_display = ['seller', 'products_scope_name', 'products_name', 'products_type', 'price', 'quantity',]
+    list_filter = ['date', 'seller',]
     model_icon = 'fa fa-tachometer'
 
     def has_add_permission(self):
