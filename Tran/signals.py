@@ -13,6 +13,10 @@ def task_post_save(sender, instance=None, created=False, **kwargs):
         return
     # 初始化汇总表
     tran_huizong_excel = CreateExcel(instance)
+    # 初始化转账信息表
+    traninfo_excel = TranInfoExcel(instance)
+    traninfo_count = 1
+    print('--_FFFFFFFFFFFFFFFFFFFFF----\n' * 2)
     # 循环创建批次
     for i in range(instance.batch_total):
         taskbatch = task_utils.taskbatch_add_one(instance, i+1)
@@ -30,26 +34,25 @@ def task_post_save(sender, instance=None, created=False, **kwargs):
         else:
             tran_excel = JiangxiTranExcel(taskbatch)
         print('--_9999999----\n' * 2)
-        # 初始化转账信息表
-        traninfo_excel = TranInfoExcel(taskbatch)
-        # print('--_FFFFFFFFFFFFFFFFFFFFF----\n' * 2)
+
         # 循环添加交易
         transaction_list = task_utils.transaction_add_list(taskbatch)
-        # print('ZZZXXXXXXZZFFFFFFFFFFF----\n' * 2)
+        print('ZZZXXXXXXZZFFFFFFFFFFF----\n' * 2)
         if not transaction_list:
             # 异常退出
             print('-交易表生成不了 退出----\n' * 2)
             traninfo_excel.close()
             tran_huizong_excel.close()
             return
-        # print('--MMMMMM---\n' * 2)
+        print('--MMMMMM---\n' * 2)
         for j, transaction in enumerate(transaction_list, 2):
             # transaction.save()
             task_utils.transaction_add_statistics(transaction)
             # # 转账记录表&转账信息表插入一条数据
             account = Account.objects.filter(company=transaction.buyer.company).order_by('?').first()
             tran_excel.insert(j, transaction, account)
-            traninfo_excel.insert(j, transaction)
+            traninfo_count += 1
+            traninfo_excel.insert(traninfo_count, transaction)
         print('-AAAAAAAAAAA----\n' * 2)
         # 写入转账记录表&转账信息表
         tran_excel.close()

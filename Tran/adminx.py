@@ -49,16 +49,8 @@ class TaskBatchAdmin:
             button_html = "<p class='changelink' >异常, 请检查条件重新添加任务</p>"
         return format_html(button_html)
 
-    def download_hz(self, obj):
-        if obj.task.status:
-            button_html = "<a class='changelink' href={}>下载</a>".format(get_download_excelfile(obj, '转账信息'))
-        else:
-            button_html = "<p class='changelink' >异常, 请检查条件重新添加任务</p>"
-        return format_html(button_html)
-
     download_zz.short_description = '下载转账文件'
-    download_hz.short_description = '下载转账信息'
-    list_display = ['task', 'num', 'batch_total', 'amount_total', 'download_zz', 'download_hz']
+    list_display = ['task', 'num', 'batch_total', 'amount_total', 'download_zz']
     list_filter = ['task', ]
     readonly_fields = ['task', 'num', 'batch_total', 'amount_total',]
     empty_value_display = '无'
@@ -78,8 +70,12 @@ class TaskBatchAdmin:
         return context
 
 class TransactionAdmin:
-    list_display = ['task', 'task_batch', 'buyer', 'seller', 'amount', ]
-    list_filter = ['task', 'task_batch', ]
+    def company(self, obj):
+        return obj.buyer.company
+    company.short_description = '代定人账号'
+    
+    list_display = ['task', 'task_batch', 'buyer', 'seller', 'company', ]
+    list_filter = ['task', 'task_batch', 'buyer', 'seller']
     readonly_fields = ['task', 'task_batch', 'buyer', 'seller', 'amount', ]
     empty_value_display = '无'
     model_icon = 'fa fa-archive'

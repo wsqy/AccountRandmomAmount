@@ -1,7 +1,7 @@
 import random
 import string
 from .models import Task, TaskBatch, Transaction
-from Account.models import Buyer, Seller, Account, Products
+from Account.models import Buyer, Seller, Account, Products, Company
 from Statistics.models import (DayBuyer, DaySeller, MouthBuyer, MouthSeller,
                                 DayCompany, MouthCompany, DaySellerProducts)
 from django.conf import settings 
@@ -28,12 +28,15 @@ def get_download_excelfile(instance, type='转账文件'):
     return '{}{}-{}-{}.xlsx'.format(filepath, filename_content, type, instance.num)
 
 def taskbatch_add_one(task, _num):
+    corporation = task.corporation
+    company_count = get_company_count(corporation)
+
     nums = 0
     while True:
         if nums > 50:
             return 
         nums += 1
-        batch_total=random.randint(task.batch_num_min, task.batch_num_max)
+        batch_total=random.randint(task.batch_num_min, min(task.batch_num_max, company_count))
         limit_min = batch_total * settings.DEFAULT_TRAN_MIN_AMOUNT
         limit_max = batch_total * settings.DEFAULT_TRAN_MAX_AMOUNT
         amount_total=random.randint(max(task.amount_total_min, limit_min), min(task.amount_total_max, limit_max))
@@ -96,47 +99,59 @@ def get_total_range(amount):
     return 2
 
 def get_products(total_range, scope):
-    products_list = Products.objects.filter(is_activate=True, total_range=total_range, scope=scope)
-    if products_list.count() == 0:
-        return
-    return random.choice(products_list)
+    return Products.objects.filter(is_activate=True, total_range=total_range, scope=scope).order_by('?').first()
 
 def transaction_add_list(instance):
     amount = instance.amount_total
+    corporation = instance.task.corporation
     num = instance.batch_total
-    hongbao_list = hongbao(total=amount, num=num)
-    hongbao_list = merge_hongbao(hongbao_list)
-    print('-ZZ--\n' * 2)
+    company_list = get_company_list(corporation, num)
+    print('-company_list--')
+    print(company_list)
+    # hongbao_list = hongbao(total=amount, num=num)
+    hongbao_list = merge_hongbao(hongbao(total=amount, num=num))
+    print('-hongbao_list--')
     print(hongbao_list)
     transaction_list = []
     _date = instance.task.date
-    print('--__++----\n' * 2)
-    for i in range(num):
+    for i, company in enumerate(company_list, 0):
         amount = hongbao_list[i]
         total_range = get_total_range(amount)
-        buyer = get_buyer(total_range, _date)
-        print('------\n' * 2)
-        if not buyer:
-            return
-        print('--__88888---\n' * 2)
-        scope = buyer.scope
-        products = get_products(total_range, scope)
-        if not products:
-            return
-        seller = get_seller(scope)
-        if not seller:
-            return
-        price = get_price(seller, products)
-        quantity = int(amount*10000/0.3/price)
+        max_try = 0
+        while True:
+            max_try += 1
+            if max_try > 100:
+                return[]
+            buyer = get_buyer(total_range, _date, company)
+            print('---buyer---')
+            print(buyer)
+            if not buyer:
+                continue
+            scope = buyer.scope
+            products = get_products(total_range, scope)
+            print('--products---')
+            print(products)
+            if not products:
+                continue
 
-        transaction = Transaction(task=instance.task, date=_date,
-                                    buyer=buyer, seller=seller,
-                                    amount=amount, task_batch=instance,
-                                    price=price, products=products,
-                                    total_range=total_range, quantity=quantity,
-                                    tran_tatal=int(price*quantity/10000))    
-        transaction.save()    
-        transaction_list.append(transaction)
+            seller = get_seller(scope)
+            print('--seller---')
+            print(seller)
+            if not seller:
+                continue
+            price = get_price(seller, products)
+            quantity = int(amount*10000/0.3/price)
+
+            transaction = Transaction(task=instance.task, date=_date,
+                                        buyer=buyer, seller=seller,
+                                        amount=amount, task_batch=instance,
+                                        price=price, products=products,
+                                        total_range=total_range, quantity=quantity,
+                                        tran_tatal=int(price*quantity/10000))    
+            transaction.save()    
+            transaction_list.append(transaction)
+            print('添加完成一条记录%s' % instance.num)
+            break
     return transaction_list
 
 def transaction_add_statistics(transaction):
@@ -177,31 +192,25 @@ def get_price(seller, products):
         return random.randint(products.price_min, products.price_max)
 
 
-def get_buyer(total_range, date):
-    buy_list = Buyer.objects.filter(is_activate=True, total_range=total_range)
-    if buy_list.count() == 0:
-        return 
-    nums = 0
-    while True:
-        if nums > settings.SEARCH_BUSINESSCOMPANY_LIMIT:
-            return 
-        nums += 1
-        buyer = random.choice(buy_list)
-        _year = date.year
-        _month = date.month
-        mouth_total = Transaction.objects.filter(buyer=buyer, total_range=total_range, date__month=_month, date__year=_year).count()
-        if mouth_total < buyer.mouth_buy_limit:
-            return buyer
+def get_buyer(total_range, date, company):
+    _year = date.year
+    _month = date.month
+    for i in range(settings.SEARCH_BUSINESSCOMPANY_LIMIT):
+        buyer_list = Buyer.objects.filter(is_activate=True, total_range=total_range, company=company).order_by('?')[:settings.SEARCH_BUSINESSCOMPANY_PER_LIMIT]
+        for buyer in buyer_list:
+            mouth_total = Transaction.objects.filter(buyer=buyer, total_range=total_range, date__month=_month, date__year=_year).count()
+            if mouth_total < buyer.mouth_buy_limit:
+                return buyer
 
 
 def get_seller(scope):
-    seller_list = Seller.objects.filter(is_activate=True, scope=scope)
-    if seller_list.count() == 0:
-        return 
-    nums = 0
-    while True:
-        if nums > settings.SEARCH_BUSINESSCOMPANY_LIMIT:
-            return 
-        nums += 1
-        return random.choice(seller_list)
+    return Seller.objects.filter(is_activate=True, scope=scope).order_by('?').first()
+
+def get_company_list(corporation, num):
+    company_list = Company.objects.filter(is_activate=True, corporation=corporation).order_by('?')[:num]
+    return company_list
+
+def get_company_count(corporation):
+    return Company.objects.filter(is_activate=True, corporation=corporation).count()
+
         

@@ -199,10 +199,10 @@ class JiangxiTranExcel(TranExcel):
         self.workbook.save("{}{}".format(self.filepath, self.filename))
 
 class TranInfoExcel(CreateExcel):
-    def __init__(self, taskbatch):
-        self.task = taskbatch.task
+    def __init__(self, task):
+        self.task = task
         super(TranInfoExcel,self).__init__(self.task)
-        self.filename_content = '{}-{}-转账信息-{}'.format(self.date_str, self.random_str, taskbatch.num)
+        self.filename_content = '{}-{}-转账信息'.format(self.date_str, self.random_str)
         self.filename = '{}.xlsx'.format(self.filename_content)
 
     def close(self):
