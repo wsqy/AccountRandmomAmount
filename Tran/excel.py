@@ -98,7 +98,7 @@ class FujianTranExcel(TranExcel):
         super(FujianTranExcel,self).header()
         # 添加表头
         self.worksheet['A1'] = '账户账号'
-        self.worksheet['B1'] = '转账金额(元)'
+        self.worksheet['B1'] = '转账金额'
         self.worksheet['C1'] = '备注'
         # 调整表格宽度
         self.worksheet.column_dimensions['A'].width = 15+2
@@ -223,6 +223,7 @@ class TranInfoExcel(CreateExcel):
         self.worksheet['H1'].alignment = self.all_center
         self.worksheet['I1'].alignment = self.all_center
         self.worksheet['J1'].alignment = self.all_center
+        self.worksheet['K1'].alignment = self.all_center
         
         # 添加表头
         self.worksheet['A1'] = '买方'
@@ -235,6 +236,7 @@ class TranInfoExcel(CreateExcel):
         self.worksheet['H1'] = '订货量'
         self.worksheet['I1'] = '顶货金额(万元)'
         self.worksheet['J1'] = '订金金额(万元)'
+        self.worksheet['k1'] = '订单号'
         # 调整表格宽度
         self.worksheet.column_dimensions['A'].width = 25+2
         self.worksheet.column_dimensions['B'].width = 20+2
@@ -247,6 +249,7 @@ class TranInfoExcel(CreateExcel):
         self.worksheet.column_dimensions['H'].width = 5+2
         self.worksheet.column_dimensions['I'].width = 25+2
         self.worksheet.column_dimensions['J'].width = 25+2
+        self.worksheet.column_dimensions['K'].width = 25+2
 
     def insert(self, i, instance):
         """
@@ -278,6 +281,9 @@ class TranInfoExcel(CreateExcel):
         self.worksheet['J%s'% i].number_format = numbers.FORMAT_TEXT
         self.worksheet['J%s'% i] = instance.amount
         self.worksheet['J%s'% i].alignment = self.all_center
+
+        self.worksheet['K%s'% i] = instance.order_no
+        self.worksheet['K%s'% i].alignment = self.all_center
 
 
 def test():

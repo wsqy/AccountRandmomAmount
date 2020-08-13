@@ -6,7 +6,7 @@ from django.utils import timezone
 
 class Corporation(models.Model):    
     """
-    集团表
+    交易场所表
     """
     TEMPLATE = (
         ('1', '福建模板'),
@@ -14,7 +14,7 @@ class Corporation(models.Model):
     )
     name = models.CharField(max_length=40, verbose_name='交易场所名称', blank=False, null=False, help_text='交易场所')
     template = models.CharField(max_length=2, verbose_name='转账文件模板', choices=TEMPLATE,
-                                blank=False, null=False, default='1')
+                                blank=False, null=False)
     is_activate = models.BooleanField(default=True, verbose_name='状态', blank=True, null=True, help_text='该交易场所是否继续使用')
 
     class Meta:
@@ -30,8 +30,9 @@ class Company(models.Model):
     集团子公司表
     """
     name = models.CharField(max_length=40, verbose_name='子公司名称', blank=False, help_text='子公司名称')
-    corporation = models.ForeignKey(Corporation, on_delete=models.PROTECT, verbose_name='所属集团', blank=False, null=False, help_text='子公司所属集团, 默认1')
+    corporation = models.ForeignKey(Corporation, on_delete=models.CASCADE, verbose_name='所属交易场所', blank=False, null=False, help_text='子公司所属集团')
     is_activate = models.BooleanField(default=True, verbose_name='状态', blank=True, null=True, help_text='该公司是否继续使用')
+    company_code = models.CharField(max_length=10, verbose_name='子公司代码', blank=True, null=True, help_text='子公司代码', default='')
 
     class Meta:
         verbose_name = '集团子公司'
@@ -60,7 +61,7 @@ class Products(models.Model):
     """
     商品表
     """
-    scope = models.ForeignKey(BusinessScope, on_delete=models.PROTECT, verbose_name='分类', blank=False, null=False, help_text='大的经营分类')
+    scope = models.ForeignKey(BusinessScope, on_delete=models.CASCADE, verbose_name='分类', blank=False, null=False, help_text='大的经营分类')
     name = models.CharField(max_length=40, verbose_name='商品名称', blank=False, null=False, help_text='商品名称')
     type = models.CharField(max_length=511, verbose_name='商品型号', blank=False, null=False, help_text='商品型号')
     price_min = models.PositiveIntegerField(verbose_name='单价下限', help_text='单价下限(元)', blank=False, null=False)
@@ -82,7 +83,7 @@ class BusinessCompany(models.Model):
     交易公司表
     """
     name = models.CharField(max_length=100, verbose_name='企业名称', blank=False, null=False, help_text='企业名称')
-    scope = models.ForeignKey(BusinessScope, on_delete=models.PROTECT, verbose_name='企业经营分类', blank=False, null=False, )
+    scope = models.ForeignKey(BusinessScope, on_delete=models.CASCADE, verbose_name='企业经营分类', blank=False, null=False, )
     corporation = models.CharField(max_length=20, verbose_name='企业法人姓名', blank=True, null=True, help_text='企业法人姓名')
     registered_capital = models.IntegerField(verbose_name='企业注册资金(元)', blank=True, null=True, help_text='企业注册资金')
     registered_capital_currency = models.CharField(max_length=10, verbose_name='注册资金币种', blank=True, null=True, help_text='注册资金币种', default='元人名币')
@@ -102,7 +103,7 @@ class Buyer(BusinessCompany):
     """
     买方表
     """
-    company = models.ForeignKey(Company, on_delete=models.PROTECT, verbose_name='所属集团子公司')
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name='所属集团子公司')
     mouth_buy_limit = models.PositiveSmallIntegerField(verbose_name='每月交易上限', blank=True, null=True, default=5, help_text='买方每月交易笔数上限')
     total_range = models.CharField(choices=settings.TOTAL_RANGE, max_length=1, verbose_name='单笔定金范围', blank=False, null=False, help_text='单笔定金范围')
     
@@ -130,7 +131,7 @@ class Account(models.Model):
     """
     账号表
     """
-    company = models.ForeignKey(Company, on_delete=models.PROTECT, verbose_name='所属集团子公司')
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, verbose_name='所属集团子公司')
     account_name = models.CharField(max_length=40, verbose_name='账号名称', blank=True, null=True, help_text='账号名称')
     account = models.CharField(max_length=40, verbose_name='账号', blank=True, null=True, help_text='账号')
     bank_name = models.CharField(max_length=40, verbose_name='开户行名称', blank=True, null=True, help_text='开户行名称')

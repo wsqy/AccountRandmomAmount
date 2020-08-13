@@ -24,10 +24,10 @@ class AccountInline:
 
 
 class CompanyAdmin:
-    list_display = ['id', 'name', 'corporation', 'is_activate',]
+    list_display = ['id', 'name', 'corporation', 'company_code', 'is_activate',]
     list_display_links = ['id', 'name']
     list_filter = ['corporation', 'is_activate',]
-    list_editable = ['name',]
+    list_editable = ['name', 'company_code']
     search_fields = ['name',]    
     import_excel = True
     inlines = [AccountInline, ]

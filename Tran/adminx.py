@@ -74,8 +74,8 @@ class TransactionAdmin:
         return obj.buyer.company
     company.short_description = '代定人账号'
     
-    list_display = ['task', 'task_batch', 'buyer', 'seller', 'company', ]
-    list_filter = ['task', 'task_batch', 'buyer', 'seller']
+    list_display = ['order_no', 'task', 'task_batch', 'buyer', 'seller', 'company', ]
+    list_filter = ['task', 'task_batch', 'buyer', 'seller', 'order_no']
     readonly_fields = ['task', 'task_batch', 'buyer', 'seller', 'amount', ]
     empty_value_display = '无'
     model_icon = 'fa fa-archive'

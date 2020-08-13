@@ -63,34 +63,6 @@ def hongbao(_min=settings.DEFAULT_TRAN_MIN_AMOUNT, _max=settings.DEFAULT_TRAN_MA
     hongbao_list.append(totalMoney)
     return hongbao_list
 
-def merge_hongbao(hongbao_list):
-    hongbao_list.sort()
-    _len = len(hongbao_list)
-    all_max = settings.DEFAULT_TRAN_MAX_AMOUNT
-    all_min = settings.DEFAULT_TRAN_MIN_AMOUNT
-
-    while True:
-        if hongbao_list[-1] > all_max:
-            out_flow = hongbao_list[-1] - all_max
-            hongbao_list[-1] -= out_flow
-            for i in range(_len-1):
-                if hongbao_list[i] < all_max:
-                    redu = random.randint(1, all_max-hongbao_list[i])
-                    hongbao_list[i] += redu
-                    out_flow -= redu 
-        elif hongbao_list[0] < all_min:
-            out_flow = all_min - hongbao_list[0]
-            ongbao_list[0] += out_flow
-            for i in range(_len):
-                if hongbao_list[i] > all_min:
-                    redu = random.randint(1, all_max-hongbao_list[i])
-                    hongbao_list[i] -= redu
-                    out_flow -= redu 
-        else:
-            random.shuffle(hongbao_list)
-            return hongbao_list
-        
-
 def get_total_range(amount):
     if amount > 500:
         return 3
@@ -108,10 +80,16 @@ def transaction_add_list(instance):
     company_list = get_company_list(corporation, num)
     print('-company_list--')
     print(company_list)
-    # hongbao_list = hongbao(total=amount, num=num)
-    hongbao_list = merge_hongbao(hongbao(total=amount, num=num))
-    print('-hongbao_list--')
-    print(hongbao_list)
+    nums = 0
+    while True:
+        if nums > 10:
+            return 
+        nums += 1
+        hongbao_list = hongbao(total=amount, num=num)
+        print('-hongbao_list--')
+        print(hongbao_list)
+        if (max(hongbao_list) < settings.DEFAULT_TRAN_MAX_AMOUNT) and (min(hongbao_list) > settings.DEFAULT_TRAN_MIN_AMOUNT):
+            break
     transaction_list = []
     _date = instance.task.date
     for i, company in enumerate(company_list, 0):
@@ -147,7 +125,9 @@ def transaction_add_list(instance):
                                         amount=amount, task_batch=instance,
                                         price=price, products=products,
                                         total_range=total_range, quantity=quantity,
-                                        tran_tatal=int(price*quantity/10000))    
+                                        tran_tatal=int(price*quantity/10000),
+                                        order_no='{0}{1:%Y%m%d}{2:0>3}{3:0>3}{4:0>3}'.format(buyer.company.company_code, instance.task.date, str(instance.task.id)[-3:], str(instance.num)[-3:], str(i+1)[-3:])
+            )
             transaction.save()    
             transaction_list.append(transaction)
             print('添加完成一条记录%s' % instance.num)

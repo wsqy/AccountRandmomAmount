@@ -78,10 +78,10 @@ class DaySellerProductsAdmin:
     def has_add_permission(self):
         return False
 
-xadmin.site.register(DayBuyer, DayBuyerAdmin)
-xadmin.site.register(DaySeller, DaySellerAdmin)
-xadmin.site.register(MouthBuyer, MouthBuyerAdmin)
-xadmin.site.register(MouthSeller, MouthSellerAdmin)
-xadmin.site.register(DayCompany, DayCompanyAdmin)
+# xadmin.site.register(DayBuyer, DayBuyerAdmin)
+# xadmin.site.register(DaySeller, DaySellerAdmin)
+# xadmin.site.register(MouthBuyer, MouthBuyerAdmin)
+# xadmin.site.register(MouthSeller, MouthSellerAdmin)
+# xadmin.site.register(DayCompany, DayCompanyAdmin)
 xadmin.site.register(MouthCompany, MouthCompanyAdmin)
 xadmin.site.register(DaySellerProducts, DaySellerProductsAdmin)
