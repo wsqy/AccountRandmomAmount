@@ -1,6 +1,6 @@
 import random
 import collections
-from Account.models import Seller, Company
+from Account.models import Seller, Company, Products
 
 def get_company_list(corporation_id, num):
     def countX(company_list, company):
@@ -37,6 +37,34 @@ def random_choice_scale():
             print(rand_data)
     print('ok')
 
+def merge_quantity(amount, quantity, price):
+    next_jisuan = 1
+    for i in range(100):
+        real_amount = round(quantity * price *0.3 / 10000, 1)
+        if real_amount ==  amount:
+            break
+        elif real_amount <  amount:
+            quantity += next_jisuan
+        elif real_amount >  amount:
+            if next_jisuan == 1:
+                quantity -= 0.9
+                next_jisuan = 0.1
+            else:
+                break
+    print("数量: %s * 单价: %s, 应该是: %s, 实际是: %s" % (quantity, price, price*quantity, amount))
+
+
+def merge_products():
+    products_list = Products.objects.filter(is_activate=True).all()
+    for products in products_list:
+        _new_total_range = ''
+        for _products in Products.objects.filter(is_activate=True, scope=products.scope, name=products.name, type=products.type,  unit=products.unit).order_by('total_range'):
+            _new_total_range += _products.total_range
+            _products.delete()
+        products.total_range = _new_total_range
+        products.save()
+
+
 if __name__ == '__main__':
-    random_choice_scale()
+    merge_products()
 

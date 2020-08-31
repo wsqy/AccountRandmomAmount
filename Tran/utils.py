@@ -70,7 +70,7 @@ def get_total_range(amount):
     return 2
 
 def get_products(total_range, scope):
-    return Products.objects.filter(is_activate=True, total_range=total_range, scope=scope).order_by('?').first()
+    return Products.objects.filter(is_activate=True, total_range__contains=total_range, scope=scope).order_by('?').first()
 
 def transaction_add_list(instance):
     amount = instance.amount_total
@@ -118,6 +118,19 @@ def transaction_add_list(instance):
                 continue
             price = get_price(seller, products)
             quantity = int(amount*10000/0.3/price)
+            next_jisuan = 1
+            for i in range(100):
+                real_amount = round(quantity * price *0.3 / 10000, 1)
+                if real_amount ==  amount:
+                    break
+                elif real_amount <  amount:
+                    quantity += next_jisuan
+                elif real_amount >  amount:
+                    if next_jisuan == 1:
+                        quantity -= 0.9
+                        next_jisuan = 0.1
+                    else:
+                        break
 
             transaction = Transaction(task=instance.task, date=_date,
                                         buyer=buyer, seller=seller,

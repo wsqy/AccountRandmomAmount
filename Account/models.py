@@ -67,7 +67,7 @@ class Products(models.Model):
     price_min = models.PositiveIntegerField(verbose_name='单价下限', help_text='单价下限(元)', blank=False, null=False)
     price_max = models.PositiveIntegerField(verbose_name='单价上限', help_text='单价上限(元)', blank=False, null=False)
     unit = models.CharField(max_length=40, verbose_name='计量单位', blank=False, null=False, help_text='计量单位')
-    total_range = models.CharField(choices=settings.TOTAL_RANGE, max_length=1, verbose_name='单笔定金范围', blank=False, null=False, help_text='单笔定金范围')
+    total_range = models.CharField(choices=settings.TOTAL_RANGE, max_length=3, verbose_name='单笔定金范围', blank=False, null=False, help_text='单笔定金范围')
     is_activate = models.BooleanField(default=True, verbose_name='状态', blank=True, null=True, help_text='该商品是否继续使用')
 
     class Meta:

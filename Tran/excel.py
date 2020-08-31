@@ -258,7 +258,7 @@ class TranInfoExcel(CreateExcel):
         self.worksheet['N1'] = '下单时商品规格'
         self.worksheet['O1'] = '下单时价格'
         self.worksheet['P1'] = '订单金额(总额元)'
-        self.worksheet['Q1'] = '订金金额'
+        self.worksheet['Q1'] = '订金金额(万元)'
         self.worksheet['R1'] = '下单时商品类型'
         self.worksheet['S1'] = '下单数量'
         self.worksheet['T1'] = '下单时单位'
