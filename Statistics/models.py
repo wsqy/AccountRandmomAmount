@@ -1,3 +1,4 @@
+import time
 import random
 from django.db import models
 # from django.conf import settings
@@ -104,15 +105,15 @@ class DaySellerProducts(models.Model):
     "卖方每日销售表"
         
     def random_choice_scale():
-        return random.randint(2, 10)
+        return (time.time() * 10000000 % 38 + 12)/10
 
     date = models.DateField(verbose_name='任务日期', default=timezone.now)
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE, verbose_name='卖方')
     products = models.ForeignKey(Products, on_delete=models.CASCADE, verbose_name='购买商品')
     price = models.PositiveIntegerField(verbose_name='购买单价', help_text='购买单价', blank=True, null=True, default=0)
     quantity = models.PositiveIntegerField(verbose_name='备货量', help_text='备货量', blank=True, null=True, default=0)
-    choice_scale = models.PositiveIntegerField(verbose_name='备货比例', help_text='备货比例',
-                                                blank=True, null=True, default=random_choice_scale)
+    choice_scale = models.FloatField(blank=True, null=True, default=random_choice_scale,
+                                      verbose_name='备货比例', help_text='备货比例')
 
     class Meta:
         verbose_name = '卖方每日销售表'

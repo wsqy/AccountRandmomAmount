@@ -21,6 +21,7 @@ class TaskAdmin:
     model_icon = 'fa fa-tasks'
     list_filter = ['corporation', 'status', 'date']
     search_fields = ['name']
+    ordering = ['-date', '-id']
     form = TaskForm
 
     def get_context(self):

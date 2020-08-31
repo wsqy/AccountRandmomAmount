@@ -29,14 +29,13 @@ def get_download_excelfile(instance, type='转账文件'):
 
 def taskbatch_add_one(task, _num):
     corporation = task.corporation
-    company_count = get_company_count(corporation)
 
     nums = 0
     while True:
         if nums > 50:
             return 
         nums += 1
-        batch_total=random.randint(task.batch_num_min, min(task.batch_num_max, company_count))
+        batch_total=random.randint(task.batch_num_min, task.batch_num_max)
         limit_min = batch_total * settings.DEFAULT_TRAN_MIN_AMOUNT
         limit_max = batch_total * settings.DEFAULT_TRAN_MAX_AMOUNT
         amount_total=random.randint(max(task.amount_total_min, limit_min), min(task.amount_total_max, limit_max))
@@ -125,8 +124,8 @@ def transaction_add_list(instance):
                                         amount=amount, task_batch=instance,
                                         price=price, products=products,
                                         total_range=total_range, quantity=quantity,
-                                        tran_tatal=int(price*quantity/10000),
-                                        order_no='{0}{1:%Y%m%d}{2:0>3}{3:0>3}{4:0>3}'.format(buyer.company.company_code, instance.task.date, str(instance.task.id)[-3:], str(instance.num)[-3:], str(i+1)[-3:])
+                                        tran_tatal=int(price*quantity),
+                                        order_no='{0}{1:%Y%m%d}{2:0>3}{3:0>3}{4:0>3}'.format(buyer.company.company_code, instance.task.date, random_int(3), str(instance.num)[-3:], str(i+1)[-3:])
             )
             transaction.save()    
             transaction_list.append(transaction)
@@ -187,10 +186,34 @@ def get_seller(scope):
     return Seller.objects.filter(is_activate=True, scope=scope).order_by('?').first()
 
 def get_company_list(corporation, num):
-    company_list = Company.objects.filter(is_activate=True, corporation=corporation).order_by('?')[:num]
+    def countX(company_list, company):
+        if len(company_list) < 2:
+            return 0
+        count = 0
+        for ele in company_list:
+            if (ele.id == company.id):
+                count = count + 1
+        return count
+
+    print("集团: %s, 总笔数: %s" % (corporation.name, num))
+    company_list = Company.objects.filter(is_activate=True, corporation=corporation).order_by('?')
+    print(company_list)
+    max_in = max((num//company_list.count()) * 2, 1)
+    print('子公司最多出现: %s 次' % max_in)
+    new_company_list = []
+    for i in range(1000):
+        if len(new_company_list) == num:
+            return new_company_list
+        company = random.choice(company_list)
+        print('---子公司 start----')
+        print(company)
+        print('---子公司 end----')
+        if countX(new_company_list, company) < max_in:
+            new_company_list.append(company)
+        print('---子公司列表 start----')
+        print(new_company_list)
+        print('---子公司列表 end----')
     return company_list
 
 def get_company_count(corporation):
     return Company.objects.filter(is_activate=True, corporation=corporation).count()
-
-        

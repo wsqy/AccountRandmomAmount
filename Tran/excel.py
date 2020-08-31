@@ -113,7 +113,7 @@ class FujianTranExcel(TranExcel):
         self.worksheet['A%s'% i].number_format = numbers.FORMAT_TEXT
         self.worksheet['B%s'% i] = instance.amount * 10000
         self.worksheet['B%s'% i].alignment = self.all_center
-        self.worksheet['C%s'% i] = self.task.remark or '资金调拨'
+        self.worksheet['C%s'% i] = '商户资金结算: %s' % instance.order_no
         self.worksheet['C%s'% i].alignment = self.all_center
 
 
@@ -175,7 +175,7 @@ class JiangxiTranExcel(TranExcel):
         self.worksheet['F%s'% str(j+1)] = instance.amount * 10000
         self.worksheet['F%s'% str(j+1)].alignment = self.all_center
 
-        self.worksheet['G%s'% str(j+1)] = self.task.remark or '资金调拨'
+        self.worksheet['G%s'% str(j+1)] = '商户资金结算: %s' % instance.order_no
         self.worksheet['G%s'% str(j+1)].alignment = self.all_center
 
         # 设置单元格格式为文本
@@ -224,19 +224,51 @@ class TranInfoExcel(CreateExcel):
         self.worksheet['I1'].alignment = self.all_center
         self.worksheet['J1'].alignment = self.all_center
         self.worksheet['K1'].alignment = self.all_center
+        self.worksheet['L1'].alignment = self.all_center
+        self.worksheet['M1'].alignment = self.all_center
+        self.worksheet['N1'].alignment = self.all_center
+
+        self.worksheet['O1'].alignment = self.all_center
+        self.worksheet['P1'].alignment = self.all_center
+        self.worksheet['Q1'].alignment = self.all_center
+        self.worksheet['R1'].alignment = self.all_center
+        self.worksheet['S1'].alignment = self.all_center
+
+        self.worksheet['T1'].alignment = self.all_center
+        self.worksheet['U1'].alignment = self.all_center
+        self.worksheet['V1'].alignment = self.all_center
+        self.worksheet['W1'].alignment = self.all_center
+        self.worksheet['x1'].alignment = self.all_center
+
         
         # 添加表头
-        self.worksheet['A1'] = '买方'
-        self.worksheet['B1'] = '代订人'
-        self.worksheet['C1'] = '供应商'
-        self.worksheet['D1'] = '货物类别'
-        self.worksheet['E1'] = '货物名称'
-        self.worksheet['F1'] = '货物型号'
-        self.worksheet['G1'] = '单价'
-        self.worksheet['H1'] = '订货量'
-        self.worksheet['I1'] = '顶货金额(万元)'
-        self.worksheet['J1'] = '订金金额(万元)'
-        self.worksheet['k1'] = '订单号'
+        self.worksheet['A1'] = '编号'
+        self.worksheet['B1'] = '产品ID'
+        self.worksheet['C1'] = '商家名称'
+        self.worksheet['D1'] = '商家ID'
+        self.worksheet['E1'] = '子公司名称'
+        self.worksheet['F1'] = '子公司ID'
+        self.worksheet['G1'] = '母公司名称'
+        self.worksheet['H1'] = '母公司ID'
+        self.worksheet['I1'] = '买家名称'
+        self.worksheet['J1'] = '买家ID'
+        self.worksheet['K1'] = '订单号'
+        self.worksheet['L1'] = '商品状态'
+        self.worksheet['M1'] = '下单时商品名称'
+        self.worksheet['N1'] = '下单时商品规格'
+        self.worksheet['O1'] = '下单时价格'
+        self.worksheet['P1'] = '订单金额(总额元)'
+        self.worksheet['Q1'] = '订金金额'
+        self.worksheet['R1'] = '下单时商品类型'
+        self.worksheet['S1'] = '下单数量'
+        self.worksheet['T1'] = '下单时单位'
+        self.worksheet['U1'] = '订单金额比例'
+        self.worksheet['V1'] = '创建时间'
+        self.worksheet['W1'] = '修改时间'
+        self.worksheet['X1'] = '删除标记'
+
+
+
         # 调整表格宽度
         self.worksheet.column_dimensions['A'].width = 25+2
         self.worksheet.column_dimensions['B'].width = 20+2
@@ -244,46 +276,61 @@ class TranInfoExcel(CreateExcel):
         self.worksheet.column_dimensions['D'].width = 12+2
         self.worksheet.column_dimensions['E'].width = 12+2
         self.worksheet.column_dimensions['F'].width = 25+2
-
         self.worksheet.column_dimensions['G'].width = 5+2
         self.worksheet.column_dimensions['H'].width = 5+2
         self.worksheet.column_dimensions['I'].width = 25+2
         self.worksheet.column_dimensions['J'].width = 25+2
         self.worksheet.column_dimensions['K'].width = 25+2
+        self.worksheet.column_dimensions['L'].width = 15+2
+        self.worksheet.column_dimensions['M'].width = 5+2
+        self.worksheet.column_dimensions['N'].width = 10+2
+        self.worksheet.column_dimensions['O'].width = 5+2
+        self.worksheet.column_dimensions['P'].width = 5+2
+        self.worksheet.column_dimensions['Q'].width = 25+2
+        self.worksheet.column_dimensions['R'].width = 25+2
+        self.worksheet.column_dimensions['S'].width = 25+2
+        self.worksheet.column_dimensions['T'].width = 15+2
+        self.worksheet.column_dimensions['U'].width = 5+2
+        self.worksheet.column_dimensions['V'].width = 10+2
+        self.worksheet.column_dimensions['W'].width = 15+2
+        self.worksheet.column_dimensions['X'].width = 5+2
+
 
     def insert(self, i, instance):
         """
         """
-        self.worksheet['A%s'% i] = instance.buyer.name
-        self.worksheet['A%s'% i].alignment = self.all_center
-        self.worksheet['B%s'% i] = instance.buyer.company.name
-        self.worksheet['B%s'% i].alignment = self.all_center
         self.worksheet['C%s'% i] = instance.seller.name
-        self.worksheet['C%s'% i].alignment = self.all_center
-
-        self.worksheet['D%s'% i] = instance.products.scope.name
-        self.worksheet['D%s'% i].alignment = self.all_center
-        self.worksheet['E%s'% i] = instance.products.name
-        self.worksheet['E%s'% i].alignment = self.all_center
-        self.worksheet['F%s'% i] = instance.products.type
-        self.worksheet['F%s'% i].alignment = self.all_center
-
-        self.worksheet['G%s'% i].number_format = numbers.FORMAT_TEXT
-        self.worksheet['G%s'% i] = instance.price
-        self.worksheet['G%s'% i].alignment = self.all_center
-        self.worksheet['H%s'% i].number_format = numbers.FORMAT_TEXT
-        self.worksheet['H%s'% i] = instance.quantity
-        self.worksheet['H%s'% i].alignment = self.all_center
-
-        self.worksheet['I%s'% i].number_format = numbers.FORMAT_TEXT
-        self.worksheet['I%s'% i] = instance.tran_tatal
-        self.worksheet['I%s'% i].alignment = self.all_center
-        self.worksheet['J%s'% i].number_format = numbers.FORMAT_TEXT
-        self.worksheet['J%s'% i] = instance.amount
-        self.worksheet['J%s'% i].alignment = self.all_center
-
+        self.worksheet['E%s'% i] = instance.buyer.company.name
+        self.worksheet['I%s'% i] = instance.buyer.name
         self.worksheet['K%s'% i] = instance.order_no
+        self.worksheet['M%s'% i] = instance.products.name
+        self.worksheet['N%s'% i] = instance.products.type 
+        self.worksheet['O%s'% i].number_format = numbers.FORMAT_TEXT
+        self.worksheet['O%s'% i] = instance.price
+        self.worksheet['P%s'% i].number_format = numbers.FORMAT_TEXT
+        self.worksheet['P%s'% i] = instance.tran_tatal
+        self.worksheet['Q%s'% i].number_format = numbers.FORMAT_TEXT
+        self.worksheet['Q%s'% i] = instance.amount
+        self.worksheet['R%s'% i] =  instance.products.scope.name
+        self.worksheet['S%s'% i] = instance.quantity
+        self.worksheet['S%s'% i].number_format = numbers.FORMAT_TEXT
+        self.worksheet['T%s'% i] = instance.products.unit
+        self.worksheet['V%s'% i] = instance.date.strftime('%Y/%m/%d')
+
+
+        self.worksheet['C%s'% i].alignment = self.all_center
+        self.worksheet['E%s'% i].alignment = self.all_center
+        self.worksheet['I%s'% i].alignment = self.all_center
         self.worksheet['K%s'% i].alignment = self.all_center
+        self.worksheet['M%s'% i].alignment = self.all_center
+        self.worksheet['N%s'% i].alignment = self.all_center
+        self.worksheet['O%s'% i].alignment = self.all_center
+        self.worksheet['P%s'% i].alignment = self.all_center
+        self.worksheet['Q%s'% i].alignment = self.all_center
+        self.worksheet['R%s'% i].alignment = self.all_center
+        self.worksheet['S%s'% i].alignment = self.all_center
+        self.worksheet['T%s'% i].alignment = self.all_center
+        self.worksheet['V%s'% i].alignment = self.all_center
 
 
 def test():

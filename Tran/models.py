@@ -83,8 +83,8 @@ class Transaction(models.Model):
     total_range = models.CharField(choices=settings.TOTAL_RANGE, max_length=1, verbose_name='总价范围', blank=False, null=False, help_text='总价范围')
     products = models.ForeignKey(Products, on_delete=models.CASCADE, verbose_name='购买商品')
     price = models.PositiveIntegerField(verbose_name='购买单价(元)', help_text='购买单价', blank=False, null=False)
-    tran_tatal = models.IntegerField(verbose_name='订货金额(万元)', blank=False, null=False, help_text='交易定金金额')
-    quantity = models.PositiveIntegerField(verbose_name='订货量', help_text='订货量', blank=False, null=False)
+    tran_tatal = models.IntegerField(verbose_name='订货金额(元)', blank=False, null=False, help_text='交易定金金额')
+    quantity = models.FloatField(verbose_name='订货量', help_text='订货量', blank=False, null=False)
     order_no = models.CharField(max_length=30, verbose_name='订单号', blank=True, null=True, help_text='订单号', default='')
 
     class Meta:

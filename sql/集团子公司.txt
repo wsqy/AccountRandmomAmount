@@ -12,10 +12,10 @@ INSERT INTO "main"."Account_company" ("id", "name", "is_activate", "corporation_
 INSERT INTO "main"."Account_company" ("id", "name", "is_activate", "corporation_id", "company_code") VALUES ('4', '福建龙三川商贸有限公司福州高新区分公司', '0', '1', 'lscgx');
 INSERT INTO "main"."Account_company" ("id", "name", "is_activate", "corporation_id", "company_code") VALUES ('5', '福建龙三川商贸有限公司福州分公司', '1', '1', 'lscfz');
 INSERT INTO "main"."Account_company" ("id", "name", "is_activate", "corporation_id", "company_code") VALUES ('6', '福建建吉佳实业有限公司福州仓山区分公司', '1', '7', 'jjjcs');
-INSERT INTO "main"."Account_company" ("id", "name", "is_activate", "corporation_id", "company_code") VALUES ('7', '福建建吉佳实业有限公司福州高新区分公司', '0', '7', 'lscgx');
-INSERT INTO "main"."Account_company" ("id", "name", "is_activate", "corporation_id", "company_code") VALUES ('8', '福建建吉佳实业有限公司鼓楼区分公司', '1', '7', 'lscgl');
-INSERT INTO "main"."Account_company" ("id", "name", "is_activate", "corporation_id", "company_code") VALUES ('9', '福建建吉佳实业有限公司福州市晋安区分公司', '1', '7', 'lscja');
-INSERT INTO "main"."Account_company" ("id", "name", "is_activate", "corporation_id", "company_code") VALUES ('10', '福建建吉佳实业有限公司闽侯县分公司', '0', '7', 'lscmh');
+INSERT INTO "main"."Account_company" ("id", "name", "is_activate", "corporation_id", "company_code") VALUES ('7', '福建建吉佳实业有限公司福州高新区分公司', '0', '7', 'jjjgx');
+INSERT INTO "main"."Account_company" ("id", "name", "is_activate", "corporation_id", "company_code") VALUES ('8', '福建建吉佳实业有限公司鼓楼区分公司', '1', '7', 'jjjgl');
+INSERT INTO "main"."Account_company" ("id", "name", "is_activate", "corporation_id", "company_code") VALUES ('9', '福建建吉佳实业有限公司福州市晋安区分公司', '1', '7', 'jjjja');
+INSERT INTO "main"."Account_company" ("id", "name", "is_activate", "corporation_id", "company_code") VALUES ('10', '福建建吉佳实业有限公司闽侯县分公司', '0', '7', 'jjjmh');
 INSERT INTO "main"."Account_company" ("id", "name", "is_activate", "corporation_id", "company_code") VALUES ('11', '福建鲲冠鑫实业有限公司鼓楼区分公司', '1', '5', 'kgxgl');
 INSERT INTO "main"."Account_company" ("id", "name", "is_activate", "corporation_id", "company_code") VALUES ('12', '福建鲲冠鑫实业有限公司闽侯分公司', '1', '5', 'kgxmg');
 INSERT INTO "main"."Account_company" ("id", "name", "is_activate", "corporation_id", "company_code") VALUES ('13', '福建鲲冠鑫实业有限公司福州高新区分公司', '0', '5', 'kgxgx');
