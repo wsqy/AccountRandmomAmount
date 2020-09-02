@@ -118,19 +118,15 @@ def transaction_add_list(instance):
                 continue
             price = get_price(seller, products)
             quantity = int(amount*10000/0.3/price)
-            next_jisuan = 1
-            for i in range(100):
-                real_amount = round(quantity * price *0.3 / 10000, 1)
+            for i in range(10):
+                real_amount = round(quantity * price *0.3 / 10000, 0)
                 if real_amount ==  amount:
                     break
                 elif real_amount <  amount:
-                    quantity += next_jisuan
+                    quantity += 1
                 elif real_amount >  amount:
-                    if next_jisuan == 1:
-                        quantity -= 0.9
-                        next_jisuan = 0.1
-                    else:
-                        break
+                    quantity -= 0.5
+                    break
 
             transaction = Transaction(task=instance.task, date=_date,
                                         buyer=buyer, seller=seller,
