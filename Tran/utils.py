@@ -7,6 +7,10 @@ from Statistics.models import (DayBuyer, DaySeller, MouthBuyer, MouthSeller,
 from django.conf import settings 
 from django.db.models import Q
 
+# 打补丁，每天设置一个0-9999的列表，流水号每次取一个并删除
+task_randmon_id_list_dict = {}
+
+
 def random_int(len=5):
     return ''.join(random.sample(string.digits, len))
 
@@ -118,7 +122,7 @@ def transaction_add_list(instance):
                 continue
             price = get_price(seller, products)
             quantity = int(amount*10000/0.3/price)
-            for i in range(10):
+            for ii in range(10):
                 real_amount = round(quantity * price *0.3 / 10000, 0)
                 if real_amount ==  amount:
                     break
@@ -134,7 +138,7 @@ def transaction_add_list(instance):
                                         price=price, products=products,
                                         total_range=total_range, quantity=quantity,
                                         tran_tatal=int(price*quantity),
-                                        order_no='{0}{1:%Y%m%d}{2:0>3}{3:0>3}{4:0>3}'.format(buyer.company.company_code, instance.task.date, random_int(3), str(instance.num)[-3:], str(i+1)[-3:])
+                                        order_no=gen_order_no(buyer, instance, i)
             )
             transaction.save()    
             transaction_list.append(transaction)
@@ -226,3 +230,28 @@ def get_company_list(corporation, num):
 
 def get_company_count(corporation):
     return Company.objects.filter(is_activate=True, corporation=corporation).count()
+
+def gen_order_no(buyer, instance, no):
+    task_id = get_task_randmon_id_list(instance)
+    return '{0}{1:%Y%m%d}{2:0>3}{3:0>3}{4:0>3}'.format(buyer.company.company_code, 
+                                                        instance.task.date,
+                                                        str(task_id),
+                                                        str(instance.num)[-3:], 
+                                                        str(no+1)[-3:])
+
+
+def get_task_randmon_id_list(instance):
+    str_date = str(instance.task.date)
+    today_task_randmon_id_list = task_randmon_id_list_dict.get(str_date, None)
+    if today_task_randmon_id_list is None:
+        today_task_randmon_id_list = [i for i in range(1000)]
+    random.shuffle(today_task_randmon_id_list)
+    try:
+        today_task_randmon_id = today_task_randmon_id_list.pop()
+        task_randmon_id_list_dict[str_date] = today_task_randmon_id_list
+        return today_task_randmon_id
+    except Exception as e:
+        print(str_date)
+        print(today_task_randmon_id_list)
+        print(task_randmon_id_list_dict)
+        raise e
