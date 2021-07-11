@@ -1,7 +1,9 @@
 import logging
+from django.conf import settings 
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.db import transaction as shiwu
+
 
 from Tran.models import Task, Transaction
 from Account.models import Account
@@ -25,16 +27,21 @@ def task_post_save(sender, instance=None, created=False, **kwargs):
     traninfo_excel = TranInfoExcel(instance)
     traninfo_count = 1
     logger.info('--准备为: %s 填充数据 ----' % instance)
+    # 清除本次的id暂存区
+    settings.task_temp_id_list = []
     # 循环创建批次
     for i in range(instance.batch_total):
         logger.info('--准备生成第 %i 个交易批次----' % i)
         taskbatch = task_utils.taskbatch_add_one(instance, i+1)
         logger.info('--生成第 %i 个交易批次结束----'% i)
         if not taskbatch:
-            logger.error('--第 %i 个交易批次生成不了 退出----'% i)
+            logger.error('--第 %i 个交易批次生成不了 回退并退出----'% i)
 
             # 事务 -- 回滚到保存点
             shiwu.savepoint_rollback(save_id)
+            # 任务失败, 释放id暂存区
+            settings.task_randmon_id_list_dict[str(instance.date)].extend(settings.task_temp_id_list)
+            logger.error('--当天id列表----'% settings.task_randmon_id_list_dict[str(instance.date)])
             return 
 
         taskbatch.save()
@@ -53,12 +60,15 @@ def task_post_save(sender, instance=None, created=False, **kwargs):
         logger.info('--为第 %i 个批次获取交易记录列表结束----'% i)
         if not transaction_list:
             # 异常退出
-            logger.error('--为第 %i 个批次获取交易记录列表失败，推出----'% i)
+            logger.error('--为第 %i 个批次获取交易记录列表失败，回退并退出----'% i)
             traninfo_excel.close()
             tran_huizong_excel.close()
 
             # 事务 -- 回滚到保存点
             shiwu.savepoint_rollback(save_id)
+            # 任务失败, 释放id暂存区
+            settings.task_randmon_id_list_dict[str(instance.date)].extend(settings.task_temp_id_list)
+            logger.error('--当天id列表----'% settings.task_randmon_id_list_dict[str(instance.date)])
 
             return
         logger.info('--为第 %i 个批次获取交易记录列表成功， 准备写入数据----'% i)

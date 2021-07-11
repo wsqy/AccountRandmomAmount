@@ -149,6 +149,11 @@ TOTAL_RANGE = (
     ('123', '不限金额'),
 )
 
+# 打补丁，每天设置一个0-9999的列表，流水号每次取一个并删除
+task_randmon_id_list_dict = {}
+# id 暂存区，本次task失败，id释放
+task_temp_id_list = []
+
 # 日志配置
 LOGGING = {
     'version': 1,

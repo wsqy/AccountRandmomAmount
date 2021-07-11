@@ -10,9 +10,6 @@ from django.db.models import Q
 
 logger = logging.getLogger('Tran')
 
-# 打补丁，每天设置一个0-9999的列表，流水号每次取一个并删除
-task_randmon_id_list_dict = {}
-
 
 def random_int(len=5):
     return ''.join(random.sample(string.digits, len))
@@ -46,7 +43,7 @@ def taskbatch_add_one(task, _num):
         limit_min = batch_total * settings.DEFAULT_TRAN_MIN_AMOUNT
         limit_max = batch_total * settings.DEFAULT_TRAN_MAX_AMOUNT
         amount_total=random.randint(max(task.amount_total_min, limit_min), min(task.amount_total_max, limit_max))
-        logger.info('--批次总金额:%s ,批次总个数:%s ----'% (batch_total, amount_total))
+        logger.default('--批次总金额:%s ,批次总个数:%s ----'% (batch_total, amount_total))
         if (limit_min < amount_total) and ( limit_max> amount_total):
             return TaskBatch(task=task, num=_num, batch_total=batch_total, amount_total=amount_total)
 
@@ -83,7 +80,7 @@ def transaction_add_list(instance):
     corporation = instance.task.corporation
     num = instance.batch_total
     company_list = get_company_list(corporation, num)
-    logger.info('--本次获取到的公司列表: %s ----'% (company_list, ))
+    logger.default('--本次获取到的公司列表: %s ----'% (company_list, ))
     
     nums = 0
     while True:
@@ -91,7 +88,7 @@ def transaction_add_list(instance):
             return 
         nums += 1
         hongbao_list = hongbao(total=amount, num=num)
-        logger.info('--获取到红包金额列表: %s ----'% (hongbao_list, ))
+        logger.default('--获取到红包金额列表: %s ----'% (hongbao_list, ))
         if (max(hongbao_list) < settings.DEFAULT_TRAN_MAX_AMOUNT) and (min(hongbao_list) > settings.DEFAULT_TRAN_MIN_AMOUNT):
             break
     transaction_list = []
@@ -105,18 +102,18 @@ def transaction_add_list(instance):
             if max_try > 100:
                 return[]
             buyer = get_buyer(total_range, _date, company)
-            logger.info('--本次买方: %s ----'% (buyer, ))
+            logger.default('--本次买方: %s ----'% (buyer, ))
             
             if not buyer:
                 continue
             scope = buyer.scope
             products = get_products(total_range, scope)
-            logger.info('--本次商品列表: %s ----'% (products, ))
+            logger.default('--本次商品列表: %s ----'% (products, ))
             if not products:
                 continue
 
             seller = get_seller(scope)
-            logger.info('--本次卖方: %s ----'% (seller, ))
+            logger.default('--本次卖方: %s ----'% (seller, ))
             if not seller:
                 continue
             price = get_price(seller, products)
@@ -141,7 +138,7 @@ def transaction_add_list(instance):
             )
             transaction.save()    
             transaction_list.append(transaction)
-            logger.info('--添加完成一条记录: %s ----'% (instance.num, ))
+            logger.default('--添加完成一条记录: %s ----'% (instance.num, ))
             break
     return transaction_list
 
@@ -198,7 +195,7 @@ def get_seller(scope):
     return Seller.objects.filter(is_activate=True, scope=scope).order_by('?').first()
 
 def get_company_list(corporation, num):
-    logger.info('----start----      准备筛选公司列表开始       -----start----')
+    logger.default('----start----      准备筛选公司列表开始       -----start----')
     def countX(company_list, company):
         if len(company_list) < 2:
             return 0
@@ -208,22 +205,22 @@ def get_company_list(corporation, num):
                 count = count + 1
         return count
 
-    logger.info('-- 集团: %s, 总笔数: %s ----' % (corporation.name, num))
+    logger.default('-- 集团: %s, 总笔数: %s ----' % (corporation.name, num))
     company_list = Company.objects.filter(is_activate=True, corporation=corporation).order_by('?')
-    logger.info('-- 随机生成的公司列表: %s ----' % (company_list, ))
+    logger.default('-- 随机生成的公司列表: %s ----' % (company_list, ))
     max_in = max((num//company_list.count()) * 2, 1)
-    logger.info('-- 子公司最多出现: %s 次 ----' % (max_in, ))
+    logger.default('-- 子公司最多出现: %s 次 ----' % (max_in, ))
     new_company_list = []
     for i in range(1000):
         if len(new_company_list) == num:
             return new_company_list
         company = random.choice(company_list)
-        logger.info('-- 随机的子公司: %s  ----' % (company, ))
+        logger.default('-- 随机的子公司: %s  ----' % (company, ))
         
         if countX(new_company_list, company) < max_in:
-            logger.info('----  可以添加  ----')
+            logger.default('----  可以添加  ----')
             new_company_list.append(company)
-    logger.info('---end-----      准备筛选公司列表结束       -----end----')
+    logger.default('---end-----      准备筛选公司列表结束       -----end----')
     return company_list
 
 def get_company_count(corporation):
@@ -239,16 +236,16 @@ def gen_order_no(buyer, instance, no):
 
 
 def get_task_randmon_id_list(instance):
-
     str_date = str(instance.task.date)
-    today_task_randmon_id_list = task_randmon_id_list_dict.get(str_date, None)
+    today_task_randmon_id_list = settings.task_randmon_id_list_dict.get(str_date, None)
     if today_task_randmon_id_list is None:
         today_task_randmon_id_list = [i for i in range(1000)]
     random.shuffle(today_task_randmon_id_list)
     try:
         today_task_randmon_id = today_task_randmon_id_list.pop()
-        task_randmon_id_list_dict[str_date] = today_task_randmon_id_list
+        settings.task_randmon_id_list_dict[str_date] = today_task_randmon_id_list
+        settings.task_temp_id_list.append(today_task_randmon_id)
         return today_task_randmon_id
     except Exception as e:
-        logger.error('-- 订单号生成失败,  日期: %s,  当前列表: %s,  总列表:%s --' % (str_date,today_task_randmon_id_list, task_randmon_id_list_dict))
+        logger.error('-- 订单号生成失败,  日期: %s,  当前列表: %s,  总列表:%s --' % (str_date,today_task_randmon_id_list, settings.task_randmon_id_list_dict))
         raise e
