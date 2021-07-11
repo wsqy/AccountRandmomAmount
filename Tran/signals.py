@@ -1,3 +1,4 @@
+import logging
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.db import transaction as shiwu
@@ -6,6 +7,8 @@ from Tran.models import Task, Transaction
 from Account.models import Account
 from Tran import utils as task_utils
 from Tran.excel import CreateExcel, FujianTranExcel, TranInfoExcel, JiangxiTranExcel
+
+logger = logging.getLogger('Tran')
 
 @shiwu.atomic
 @receiver(post_save, sender=Task)
@@ -21,13 +24,14 @@ def task_post_save(sender, instance=None, created=False, **kwargs):
     # 初始化转账信息表
     traninfo_excel = TranInfoExcel(instance)
     traninfo_count = 1
-    print('--_FFFFFFFFFFFFFFFFFFFFF----\n' * 2)
+    logger.info('--准备为: %s 填充数据 ----' % instance)
     # 循环创建批次
     for i in range(instance.batch_total):
+        logger.info('--准备生成第 %i 个交易批次----' % i)
         taskbatch = task_utils.taskbatch_add_one(instance, i+1)
-        print('taskbatch--_9999999----\n' * 2)
+        logger.info('--生成第 %i 个交易批次结束----'% i)
         if not taskbatch:
-            print('-交易批次生成不了 退出----\n' * 2)
+            logger.error('--第 %i 个交易批次生成不了 退出----'% i)
 
             # 事务 -- 回滚到保存点
             shiwu.savepoint_rollback(save_id)
@@ -42,14 +46,14 @@ def task_post_save(sender, instance=None, created=False, **kwargs):
             tran_excel = FujianTranExcel(taskbatch)
         else:
             tran_excel = JiangxiTranExcel(taskbatch)
-        print('--_9999999----\n' * 2)
+        logger.info('--准备为第 %i 个批次添加交易记录----'% i)
 
         # 循环添加交易
         transaction_list = task_utils.transaction_add_list(taskbatch)
-        print('ZZZXXXXXXZZFFFFFFFFFFF----\n' * 2)
+        logger.info('--为第 %i 个批次获取交易记录列表结束----'% i)
         if not transaction_list:
             # 异常退出
-            print('-交易表生成不了 退出----\n' * 2)
+            logger.error('--为第 %i 个批次获取交易记录列表失败，推出----'% i)
             traninfo_excel.close()
             tran_huizong_excel.close()
 
@@ -57,7 +61,7 @@ def task_post_save(sender, instance=None, created=False, **kwargs):
             shiwu.savepoint_rollback(save_id)
 
             return
-        print('--MMMMMM---\n' * 2)
+        logger.info('--为第 %i 个批次获取交易记录列表成功， 准备写入数据----'% i)
         for j, transaction in enumerate(transaction_list, 2):
             # transaction.save()
             task_utils.transaction_add_statistics(transaction)
@@ -66,7 +70,7 @@ def task_post_save(sender, instance=None, created=False, **kwargs):
             tran_excel.insert(j, transaction, account)
             traninfo_count += 1
             traninfo_excel.insert(traninfo_count, transaction)
-        print('-AAAAAAAAAAA----\n' * 2)
+        logger.info('--第 %i 个交易批次完成， 待写入表格, ----' % i)
         # 写入转账记录表&转账信息表
         tran_excel.close()
         traninfo_excel.close()
