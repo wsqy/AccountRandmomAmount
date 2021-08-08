@@ -28,7 +28,7 @@ def task_post_save(sender, instance=None, created=False, **kwargs):
     traninfo_count = 1
     logger.info('--准备为: %s 填充数据 ----' % instance)
     # 清除本次的id暂存区
-    settings.task_temp_id_list = []
+    settings.TASK_TEMP_ID_LIST = []
     # 循环创建批次
     for i in range(instance.batch_total):
         logger.info('--准备生成第 %i 个交易批次----' % i)
@@ -40,8 +40,8 @@ def task_post_save(sender, instance=None, created=False, **kwargs):
             # 事务 -- 回滚到保存点
             shiwu.savepoint_rollback(save_id)
             # 任务失败, 释放id暂存区
-            settings.task_randmon_id_list_dict[str(instance.date)].extend(settings.task_temp_id_list)
-            logger.error('--当天id列表----'% settings.task_randmon_id_list_dict[str(instance.date)])
+            settings.TASK_RANDOM_ID_LIST_DICT[str(instance.date)].extend(settings.TASK_TEMP_ID_LIST)
+            logger.error('--当天id列表----'% settings.TASK_RANDOM_ID_LIST_DICT[str(instance.date)])
             return 
 
         taskbatch.save()
@@ -67,8 +67,8 @@ def task_post_save(sender, instance=None, created=False, **kwargs):
             # 事务 -- 回滚到保存点
             shiwu.savepoint_rollback(save_id)
             # 任务失败, 释放id暂存区
-            settings.task_randmon_id_list_dict[str(instance.date)].extend(settings.task_temp_id_list)
-            logger.error('--当天id列表----'% settings.task_randmon_id_list_dict[str(instance.date)])
+            settings.TASK_RANDOM_ID_LIST_DICT[str(instance.date)].extend(settings.TASK_TEMP_ID_LIST)
+            logger.error('--当天id列表----'% settings.TASK_RANDOM_ID_LIST_DICT[str(instance.date)])
 
             return
         logger.info('--为第 %i 个批次获取交易记录列表成功， 准备写入数据----'% i)
